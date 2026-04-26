@@ -21,6 +21,8 @@
 #   AUTH0_DOMAIN          — e.g. mirador.eu.auth0.com
 #   AUTH0_CLIENT_ID       — Auth0 M2M app client ID (read-only API access)
 #   AUTH0_CLIENT_SECRET   — same M2M app client secret
+#   HOMEASSISTANT_URL     — e.g. http://homeassistant.local:8123 (local network)
+#   HOMEASSISTANT_TOKEN   — Long-lived token from HA Profile → Long-Lived Tokens
 #
 # Optional env vars (override defaults) :
 #   POSTGRES_URL          — default postgresql://demo:demo@localhost:5432/mirador
@@ -215,7 +217,29 @@ mcp_add redis "npx -y mcp-server-redis" --env URL="${REDIS_URL:-redis://localhos
 # Docker — official, useful for local dev (ps, logs)
 mcp_add docker "npx -y mcp-server-docker" || skip "docker" "no community package found"
 
-# ── Section 10 : (optional) Slack, Linear, Jira — uncomment if used ──
+# ── Section 10 : Home Automation (Home Assistant on local network) ───
+
+echo ""
+echo "── Home automation MCP servers ──"
+
+# Home Assistant — community MCP server, talks to a HA instance via its
+# REST + WebSocket API on the local network. Long-lived token from
+# HA UI → Profile → Long-Lived Access Tokens → Create Token.
+#
+# Env vars :
+#   HOMEASSISTANT_URL   — e.g. http://homeassistant.local:8123  or  http://192.168.1.42:8123
+#   HOMEASSISTANT_TOKEN — long-lived access token from HA Profile page
+#
+# DO NOT expose your HA token in CI ; this is a local-dev MCP only.
+if [ -n "${HOMEASSISTANT_URL:-}" ] && [ -n "${HOMEASSISTANT_TOKEN:-}" ]; then
+    mcp_add home-assistant "npx -y @voska/hass-mcp" \
+        --env HOMEASSISTANT_URL="$HOMEASSISTANT_URL" \
+        --env HOMEASSISTANT_TOKEN="$HOMEASSISTANT_TOKEN"
+else
+    skip "home-assistant" "HOMEASSISTANT_URL and HOMEASSISTANT_TOKEN must both be set"
+fi
+
+# ── Section 11 : (optional) Slack, Linear, Jira — uncomment if used ──
 
 # if [ -n "${SLACK_TOKEN:-}" ]; then
 #     mcp_add slack "npx -y @modelcontextprotocol/server-slack" --env SLACK_BOT_TOKEN="$SLACK_TOKEN"
