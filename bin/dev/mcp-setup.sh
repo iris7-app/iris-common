@@ -241,7 +241,36 @@ else
     skip "home-assistant" "HASS_URL and HASS_TOKEN must both be set"
 fi
 
-# ── Section 11 : (optional) Slack, Linear, Jira — uncomment if used ──
+# ── Section 11 : Robotics (Ecovacs vacuum/mop robots) ───────────────
+
+echo ""
+echo "── Robotics MCP servers ──"
+
+# Ecovacs — official MCP server published by Ecovacs (github.com/ecovacs-ai/
+# ecovacs-mcp). Two transport modes ; we use SSE remote because it's hosted
+# by Ecovacs and zero-install :
+#   stdio local : `python -m ecovacs_robot_mcp` + ECO_API_KEY env
+#   sse remote  : https://open.ecovacs.<region>/sse?ak=<AK>     ← chosen
+#
+# 4 tools : list_devices, start_cleaning (s/p/r/h), return_to_base
+# (go-start/stopGo), query_status (cleanSt + chargeSt + stationSt).
+#
+# AK (API Key) is obtained one-time at https://open.ecovacs.com/preparationForUse
+# (or open.ecovacs.cn if you're in mainland China). Do NOT expose your AK
+# in CI ; this is a local-dev MCP only.
+#
+# Env vars :
+#   ECO_API_KEY — Access Key from open.ecovacs.com developer portal
+#   ECO_API_URL — optional, defaults to https://open.ecovacs.com
+#                  (use https://open.ecovacs.cn for mainland China)
+if [ -n "${ECO_API_KEY:-}" ]; then
+    ECO_API_URL="${ECO_API_URL:-https://open.ecovacs.com}"
+    mcp_add ecovacs "${ECO_API_URL}/sse?ak=${ECO_API_KEY}" --transport sse
+else
+    skip "ecovacs" "ECO_API_KEY not set — get one at https://open.ecovacs.com/preparationForUse"
+fi
+
+# ── Section 12 : (optional) Slack, Linear, Jira — uncomment if used ──
 
 # if [ -n "${SLACK_TOKEN:-}" ]; then
 #     mcp_add slack "npx -y @modelcontextprotocol/server-slack" --env SLACK_BOT_TOKEN="$SLACK_TOKEN"
