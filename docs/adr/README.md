@@ -41,6 +41,8 @@ modifying an ADR.
 | 0055 | Accepted | [Shell-based release automation (no semantic-release)](0055-shell-based-release-automation.md) |
 | 0057 | Accepted | [Conserver le polyrepo (svc + UI séparés), pas de migration vers monorepo](0057-polyrepo-vs-monorepo.md) |
 | 0059 | Accepted | [Renovate base preset + sync script (option B)](0059-renovate-base-preset.md) |
+| 0060 | Accepted | [Flat 2-submodule inheritance over transitive nested](0060-flat-vs-transitive-submodule-inheritance.md) |
+| 0061 | Accepted | [Per-repo tag namespace pattern (`stable-X-v*`)](0061-per-repo-tag-namespace-pattern.md) |
 <!-- ADR-INDEX:END -->
 
 ## Adding a new cross-cutting ADR
