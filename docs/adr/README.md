@@ -1,0 +1,71 @@
+# Cross-cutting ADRs — `mirador-common`
+
+This directory captures the **why** of every architectural choice that
+applies UNIVERSALLY across the [mirador1](https://gitlab.com/mirador1)
+family — i.e. decisions that bind java + python + ui + shared-service
+all four together (release engineering, repo conventions, dependency
+management).
+
+For **backend-only** decisions (observability stack, K8s posture,
+multi-cloud terraform, secret management), see
+[`mirador-service-shared/docs/adr/`](https://gitlab.com/mirador1/mirador-service-shared/-/tree/main/docs/adr).
+
+For **repo-local** decisions (Spring Boot stack, FastAPI auth, Angular
+zoneless mode), see each consumer repo's own `docs/adr/`.
+
+## Status snapshot
+
+- ✨ **Accepted** : current architectural shape ; obey unless an ADR
+  supersedes.
+- 📝 **Proposed** : draft, awaiting review or implementation.
+- 🛑 **Superseded** : kept for historical context ; the link points to
+  the replacement.
+
+## Numbering
+
+ADR numbers preserved from the source repo (`mirador-service-shared`)
+to maintain external references. New ADRs born here will use the next
+sequential number from this repo's tip (e.g. 0060+).
+
+## Flat index
+
+The table below is **auto-regenerated** by
+[`bin/dev/regen-adr-index.sh`](../../bin/dev/regen-adr-index.sh).
+Do not edit between the markers — run the script after adding /
+modifying an ADR.
+
+<!-- ADR-INDEX:START -->
+| ID | Status | Title |
+|---|---|---|
+| 0001 | Accepted | [Shared infra extraction via git submodule](0001-shared-repo-via-submodule.md) |
+| 0055 | Accepted | [Shell-based release automation (no semantic-release)](0055-shell-based-release-automation.md) |
+| 0057 | Accepted | [Conserver le polyrepo (svc + UI séparés), pas de migration vers monorepo](0057-polyrepo-vs-monorepo.md) |
+| 0059 | Accepted | [Renovate base preset + sync script (option B)](0059-renovate-base-preset.md) |
+<!-- ADR-INDEX:END -->
+
+## Adding a new cross-cutting ADR
+
+1. **Verify it's truly universal** — if the decision only affects backend
+   (java + python), it belongs in `mirador-service-shared/docs/adr/`,
+   not here. Litmus test : "would the UI repo need this decision too?"
+   → yes = universal.
+2. Pick the next 4-digit ID (look at existing files).
+3. File name : `NNNN-<kebab-case-title>.md` (e.g. `0060-some-decision.md`).
+4. First line of the file : `# ADR-NNNN — <Title>` or `# ADR-NNNN : <Title>`.
+5. Include a `**Status** : <Proposed|Accepted|Superseded>` line near the
+   top so the index regenerator picks it up.
+6. Run `bin/dev/regen-adr-index.sh --in-place` to refresh this README.
+7. Commit the ADR + the regenerated README in the same commit on `main`.
+8. Bump the submodule SHA in each consumer repo that's affected
+   (in practice : all of them, since this is the universal layer).
+
+## See also
+
+- [`../../bin/dev/regen-adr-index.sh`](../../bin/dev/regen-adr-index.sh) — regenerator
+- [`../../bin/ship/pre-sync.sh`](../../bin/ship/pre-sync.sh) — git safety pre-flight
+- [`../../README.md`](../../README.md) — repo overview + how consumers attach
+- Sibling ADR dirs :
+  [shared-service](https://gitlab.com/mirador1/mirador-service-shared/-/tree/main/docs/adr) ·
+  [java](https://gitlab.com/mirador1/mirador-service-java/-/tree/main/docs/adr) ·
+  [python](https://gitlab.com/mirador1/mirador-service-python/-/tree/main/docs/adr) ·
+  [ui](https://gitlab.com/mirador1/mirador-ui/-/tree/main/docs/adr)
