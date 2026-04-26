@@ -33,6 +33,7 @@ ui, AND shared-service itself).
 | `bin/ship/gitlab-release.sh` | Create GitLab Release object from a tag | every repo |
 | `bin/ship/renovate-sync.sh` | Sync `renovate.json` across consumers from `renovate-base.json` | maintainer (run from any repo) |
 | `bin/ship/check-default-branch.sh` | Verify all 4 mirador1 projects have `default_branch=main` | maintainer / pre-tag |
+| `bin/ship/bump-common-everywhere.sh` | Bump `infra/common` SHA across all 4 consumers in one pass (commit + push + MR + auto-merge) | maintainer (run from `mirador-common`) |
 | `bin/dev/regen-adr-index.sh` | Regenerate `docs/adr/README.md` flat-index table from ADR files (`--check` for CI drift) | every repo (per-repo ADRs) |
 | `ci-templates/conventional-commits.yml` | GitLab CI template enforcing Conventional Commits on every MR | every repo (`include:` from `.gitlab-ci.yml`) |
 | `renovate-base.json` | Common Renovate config, synced into each repo's `renovate.json` via `bin/ship/renovate-sync.sh` | every repo |
@@ -70,18 +71,28 @@ infra/common/bin/dev/regen-adr-index.sh --check
 
 ```bash
 # In mirador-common :
-$ cd /Users/benoitbesson/dev/workspace-modern/mirador-common
+$ cd ~/dev/mirador/mirador-common
 $ git switch main
 # … edit, commit, push …
 $ git push origin main
 
-# In any consumer repo :
+# In any consumer repo (manual single-bump) :
 $ cd <consumer>/infra/common
 $ git pull origin main
 $ cd ../..
 $ git add infra/common
 $ git commit -m "chore(common): bump SHA — <reason>"
 $ git push
+```
+
+**Bulk bump across all 4 consumers in one command** (faster, safer —
+runs pre-flight checks first, then commits + pushes + creates MR with
+auto-merge per consumer) :
+
+```bash
+$ cd ~/dev/mirador/mirador-common
+$ bin/ship/bump-common-everywhere.sh           # creates MRs + auto-merge
+$ bin/ship/bump-common-everywhere.sh --dry-run # preview without changes
 ```
 
 The consumer repo's CI re-runs against the new common SHA. Tag the

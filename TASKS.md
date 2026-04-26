@@ -17,11 +17,11 @@ and was **smoke-tested end-to-end on 2026-04-26 15:28** :
    and ui ([!156](https://gitlab.com/mirador1/mirador-ui/-/merge_requests/156)).
 ✅ Pre-push hooks (vitest + ng build for ui) pass cleanly through the script.
 
-### Doc polish (open)
+### Doc polish
 
-☐ **Document in `bin/README.md`** : add a row in the `ship/` table for
-`bump-common-everywhere.sh` describing it (cross-repo bulk SHA bump).
+✅ All shipped 2026-04-26 15:33 :
+- `README.md` "What lives here" table : new row for `bump-common-everywhere.sh`.
+- `README.md` "How to update" section : bulk-bump command + `--dry-run` example.
+- (`bin/README.md` not created — script self-documents via `--help` and the table at root README is canonical.)
 
-☐ **Mention in main `README.md`** : 1-line mention in the "How to update"
-section : "to propagate a common change to all 4 consumers in one
-command, see `bin/ship/bump-common-everywhere.sh`".
+No further open work. File can be deleted at next session start if no new tasks land.
