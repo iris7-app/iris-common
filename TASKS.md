@@ -5,68 +5,43 @@ items only ; per-repo items live in each consumer's own `TASKS.md`.
 
 ---
 
-## 🔧 Cross-repo bump automation
+## 🔧 bump-common-everywhere.sh — finishing touches
 
-☐ **`bin/ship/bump-common-everywhere.sh`** — script qui bump le SHA de
-`infra/common/` dans les 4 consumers en parallèle (java + python + ui +
-shared) après un push sur `mirador-common/main`.
+The script SHIPPED on 2026-04-26 (commit [`737ca08`](https://gitlab.com/mirador1/mirador-common/-/commit/737ca08))
+but has NOT been smoke-tested end-to-end (the `git fetch origin` step
+hung in the Claude eval sandbox — production environment shouldn't have
+this issue, but it's not proven).
 
-**Pourquoi** : la pattern α flat (cf. [ADR-0060](docs/adr/0060-flat-vs-transitive-submodule-inheritance.md))
-implique que chaque consumer pin son propre SHA de common. Quand on
-patch common (fix critique, nouvelle option d'un script universel), il
-faut bumper chaque consumer manuellement — 4 séquences de
-`cd <repo> && cd infra/common && git pull && cd .. && git add infra/common
-&& git commit + push + MR + auto-merge`. Pénible si répétitif.
+☐ **Smoke-test the script** : run from a normal terminal in
+`~/dev/mirador/mirador-common` :
+```bash
+bin/ship/bump-common-everywhere.sh --dry-run
+```
+Should print "Pre-flight 1 : common sync state ✓" + per-consumer status
+without doing anything. Then if dry-run is clean, `--no-mr` to bump
+locally without creating MRs and verify each consumer's submodule pin
+moved.
 
-**Solution** : script qui automatise pour les 4 repos en une commande.
-Pattern similaire à `bin/ship/renovate-sync.sh` (qui sync `renovate.json`
-across repos).
+☐ **Document in `bin/README.md`** : add a row in the `ship/` table for
+`bump-common-everywhere.sh` describing it (cross-repo bulk SHA bump).
 
-### Acceptance criteria
+☐ **Mention in main `README.md`** : 1-line mention in the "How to update"
+section : "to propagate a common change to all 4 consumers in one
+command, see `bin/ship/bump-common-everywhere.sh`".
 
-- [ ] **Localisation** : `mirador-common/bin/ship/bump-common-everywhere.sh`
-- [ ] **Détection auto des consumers** : lire `consumers.txt` ou un argument
-      explicite. Default : `mirador-service-java`, `mirador-service-python`,
-      `mirador-ui`, `mirador-service-shared`.
-- [ ] **Pre-flight checks** :
-  - Common's main est-il à jour avec origin ? (refuser si non)
-  - Tous les consumers existent localement à un path connu ? (skip si absent)
-  - Tous les consumers ont une branche `dev` propre (pas de uncommitted) ?
-- [ ] **Pour chaque consumer** : `cd <repo> && git switch dev &&
-      git pull --rebase && cd infra/common && git pull origin main &&
-      cd .. && git add infra/common && git commit -m "chore(submodule): bump common SHA" && git push`.
-- [ ] **MR auto-creation** (optionnel via flag `--mr`) : `glab mr create
-      --auto-merge` pour chaque consumer après le push.
-- [ ] **Dry-run** (`--dry-run`) : montre les bumps qui seraient faits sans rien commiter.
-- [ ] **Rollback safety** : si un consumer fail, les autres déjà bumpés
-      ne sont pas rollbackés (le script log clairement où ça a planté).
-- [ ] **Output** : un tableau récap final genre `✓ java bumped, ✓ python
-      bumped, ✗ ui FAILED (uncommitted changes), ✓ shared bumped`.
-- [ ] Tests : un dry-run sur les 4 repos doit passer sans erreur.
-- [ ] Documenter dans `bin/README.md` (la table `ship/`).
-- [ ] Mention dans le README principal du repo.
+### Asymmetry to resolve at next session start
 
-### Quand l'utiliser (pas systématiquement)
+Per `git submodule status` across consumers (2026-04-26) :
 
-- ✅ Patch critique d'un script universel → propagation rapide à tous
-- ✅ Nouvelle option d'un script qu'on veut tous voir
-- ❌ Petit fix local qui n'affecte pas les consumers actifs (laisser α
-  jouer son rôle d'isolation)
-- ❌ Refactor qui change l'API d'un script (les consumers doivent
-  d'abord adapter leur usage avant de bumper — une cascade automatique
-  les casserait)
+| Consumer | infra/common SHA |
+|---|---|
+| mirador-service-shared | `d37ec84` |
+| mirador-service-java | `4291400` |
+| mirador-service-python | `d37ec84` |
+| mirador-ui | `d37ec84` |
 
-### Pourquoi pas un script `git submodule sync` natif
-
-`git submodule sync` met à jour les URLs des submodules (rare), pas leur
-SHA pin. `git submodule update --remote` bump UN repo à la fois et
-nécessite un `git add + commit` après — il y a 4 répétitions à
-automatiser, plus la création de MR. D'où le besoin d'un wrapper bash.
-
-### Lien avec les ADRs
-
-- [ADR-0060](docs/adr/0060-flat-vs-transitive-submodule-inheritance.md) — α
-  flat = chaque consumer pin son SHA, ce script aide à les aligner
-  rapidement quand voulu
-- [ADR-0001](docs/adr/0001-shared-repo-via-submodule.md) — pattern submodule
-  général
+→ python + ui + shared lag behind java + the latest common commit
+(currently [`737ca08`](https://gitlab.com/mirador1/mirador-common/-/commit/737ca08)).
+This is **the perfect grandeur-nature test** of `bump-common-everywhere.sh`.
+Run it at next session start to align all 4 consumers + smoke-test the
+script in one stroke.
