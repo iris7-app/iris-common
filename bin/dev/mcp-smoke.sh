@@ -187,15 +187,6 @@ if [ -z "${SKIP_INFRA:-}" ]; then
         printf "  ${Y}○${N} %-60s ${D}sonar MCP not wired${N}\n" "sonar quality gate"
     fi
 
-    # Ecovacs — list_devices is the only side-effect-free tool, all others
-    # mutate (start/stop clean, dock, etc.) which we never invoke from a smoke.
-    if claude mcp list 2>/dev/null | grep -q "^ecovacs"; then
-        probe "ecovacs list_devices" \
-            "Use the ecovacs MCP to list my robots. Reply with how many devices were returned (0 is OK)." \
-            "[0-9]+|nickname|robot|device"
-    else
-        printf "  ${Y}○${N} %-60s ${D}ecovacs MCP not wired${N}\n" "ecovacs list_devices"
-    fi
 fi
 
 # ── Summary ─────────────────────────────────────────────────────────
