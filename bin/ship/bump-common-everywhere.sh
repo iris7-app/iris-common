@@ -279,13 +279,25 @@ for consumer in "${CONSUMERS_OK[@]}"; do
                 fi
                 if [ -n "${TOKEN}" ] && [ -n "${MR_ID}" ]; then
                     PROJECT_PATH="mirador1%2F${consumer}"
-                    HTTP_CODE=$(curl -s -X PUT -H "PRIVATE-TOKEN: ${TOKEN}" \
-                        "https://gitlab.com/api/v4/projects/${PROJECT_PATH}/merge_requests/${MR_ID}/merge?merge_when_pipeline_succeeds=true&should_remove_source_branch=false" \
-                        -o /dev/null -w "%{http_code}")
+                    # Retry up to 3 times with 2s delay : freshly-created MRs sometimes
+                    # need a moment for GitLab to register the head_pipeline before
+                    # accepting merge_when_pipeline_succeeds (returns 422 ci_must_pass).
+                    HTTP_CODE=""
+                    for attempt in 1 2 3; do
+                        HTTP_CODE=$(curl -s -X PUT -H "PRIVATE-TOKEN: ${TOKEN}" \
+                            "https://gitlab.com/api/v4/projects/${PROJECT_PATH}/merge_requests/${MR_ID}/merge?merge_when_pipeline_succeeds=true&should_remove_source_branch=false" \
+                            -o /dev/null -w "%{http_code}")
+                        if [ "${HTTP_CODE}" = "200" ]; then
+                            break
+                        fi
+                        if [ "${attempt}" -lt 3 ]; then
+                            sleep 2
+                        fi
+                    done
                     if [ "${HTTP_CODE}" = "200" ]; then
                         ok "auto-merge armed (HTTP ${HTTP_CODE})"
                     else
-                        warn "auto-merge arming returned HTTP ${HTTP_CODE} — check MR manually"
+                        warn "auto-merge arming returned HTTP ${HTTP_CODE} after 3 retries — check MR manually"
                     fi
                 else
                     warn "missing token or MR id — auto-merge skipped"
