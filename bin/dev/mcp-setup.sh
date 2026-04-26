@@ -21,8 +21,6 @@
 #   AUTH0_DOMAIN          — e.g. mirador.eu.auth0.com
 #   AUTH0_CLIENT_ID       — Auth0 M2M app client ID (read-only API access)
 #   AUTH0_CLIENT_SECRET   — same M2M app client secret
-#   HASS_URL              — e.g. http://homeassistant.local:8123 (local network)
-#   HASS_TOKEN            — Long-lived token from HA Profile → Long-Lived Tokens
 #
 # Optional env vars (override defaults) :
 #   POSTGRES_URL          — default postgresql://demo:demo@localhost:5432/mirador
@@ -217,60 +215,7 @@ mcp_add redis "npx -y mcp-server-redis" --env URL="${REDIS_URL:-redis://localhos
 # Docker — official, useful for local dev (ps, logs)
 mcp_add docker "npx -y mcp-server-docker" || skip "docker" "no community package found"
 
-# ── Section 10 : Home Automation (Home Assistant on local network) ───
-
-echo ""
-echo "── Home automation MCP servers ──"
-
-# Home Assistant — community MCP server (hass-mcp on npm), talks to a HA
-# instance via its REST API on the local network. Long-lived token from
-# HA UI → Profile → Long-Lived Access Tokens → Create Token.
-#
-# Env vars (note : env var names match what hass-mcp expects, NOT HA's
-# own HOMEASSISTANT_* convention) :
-#   HASS_URL    — e.g. http://homeassistant.local:8123  or  http://192.168.1.42:8123
-#   HASS_TOKEN  — long-lived access token from HA Profile page
-#
-# DO NOT expose your HA token in CI ; this is a local-dev MCP only.
-# 3 tools exposed by hass-mcp : ha_get_state, ha_list_states, ha_call_service.
-if [ -n "${HASS_URL:-}" ] && [ -n "${HASS_TOKEN:-}" ]; then
-    mcp_add home-assistant "npx -y hass-mcp" \
-        --env HASS_URL="$HASS_URL" \
-        --env HASS_TOKEN="$HASS_TOKEN"
-else
-    skip "home-assistant" "HASS_URL and HASS_TOKEN must both be set"
-fi
-
-# ── Section 11 : Robotics (Ecovacs vacuum/mop robots) ───────────────
-
-echo ""
-echo "── Robotics MCP servers ──"
-
-# Ecovacs — official MCP server published by Ecovacs (github.com/ecovacs-ai/
-# ecovacs-mcp). Two transport modes ; we use SSE remote because it's hosted
-# by Ecovacs and zero-install :
-#   stdio local : `python -m ecovacs_robot_mcp` + ECO_API_KEY env
-#   sse remote  : https://open.ecovacs.<region>/sse?ak=<AK>     ← chosen
-#
-# 4 tools : list_devices, start_cleaning (s/p/r/h), return_to_base
-# (go-start/stopGo), query_status (cleanSt + chargeSt + stationSt).
-#
-# AK (API Key) is obtained one-time at https://open.ecovacs.com/preparationForUse
-# (or open.ecovacs.cn if you're in mainland China). Do NOT expose your AK
-# in CI ; this is a local-dev MCP only.
-#
-# Env vars :
-#   ECO_API_KEY — Access Key from open.ecovacs.com developer portal
-#   ECO_API_URL — optional, defaults to https://open.ecovacs.com
-#                  (use https://open.ecovacs.cn for mainland China)
-if [ -n "${ECO_API_KEY:-}" ]; then
-    ECO_API_URL="${ECO_API_URL:-https://open.ecovacs.com}"
-    mcp_add ecovacs "${ECO_API_URL}/sse?ak=${ECO_API_KEY}" --transport sse
-else
-    skip "ecovacs" "ECO_API_KEY not set — get one at https://open.ecovacs.com/preparationForUse"
-fi
-
-# ── Section 12 : (optional) Slack, Linear, Jira — uncomment if used ──
+# ── Section 10 : (optional) Slack, Linear, Jira — uncomment if used ──
 
 # if [ -n "${SLACK_TOKEN:-}" ]; then
 #     mcp_add slack "npx -y @modelcontextprotocol/server-slack" --env SLACK_BOT_TOKEN="$SLACK_TOKEN"
