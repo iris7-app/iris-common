@@ -20,7 +20,11 @@
 #
 # Optional env vars (override defaults) :
 #   MIRADOR_JAVA_MCP_URL    — default http://localhost:8080/mcp
-#   MIRADOR_PYTHON_MCP_URL  — default http://localhost:8000/mcp
+#   MIRADOR_PYTHON_MCP_URL  — default http://localhost:8080/mcp (shared port
+#                              contract — only one backend runs at 8080 at
+#                              a time ; switching is a matter of stopping
+#                              one and starting the other ; see body for the
+#                              "run both simultaneously" override pattern)
 #
 # Usage :
 #   bin/dev/mcp-setup-app.sh           # wire up both backends
@@ -103,11 +107,27 @@ probe_reachable() {
 echo "── Mirador application MCP servers ──"
 echo "${D}  These expose the apps' own domain + logs + metrics + actuator${N}"
 
+# BOTH backends share the SAME default contract — port 8080, /mcp endpoint.
+# Per the polyrepo design, Java and Python expose an IDENTICAL OpenAPI + MCP
+# tool catalogue and are interchangeable plug-replacements for the UI. This
+# means only ONE backend runs at a time on 8080 ; switching is a matter of
+# stopping one and starting the other.
+#
+# To run BOTH simultaneously (rare — usually for parity testing) :
+#   1. Start Python on a different port :
+#        MIRADOR_SERVER_PORT=8000 uv run mirador-service
+#   2. Override the URL when wiring :
+#        MIRADOR_PYTHON_MCP_URL=http://localhost:8000/mcp bin/dev/mcp-setup-app.sh
+#
+# Otherwise both MCP entries point at 8080 ; the inactive one shows ✗ Failed
+# in `claude mcp list` (expected). Claude routes "use mirador-java's tool X"
+# vs "mirador-python's X" by NAME, so even with shared URL each entry is
+# distinct from claude's perspective.
 JAVA_MCP_URL="${MIRADOR_JAVA_MCP_URL:-http://localhost:8080/mcp}"
 mcp_add_http mirador-java "$JAVA_MCP_URL"
 [ "$DRY_RUN" = "0" ] && [ "$REMOVE" = "0" ] && probe_reachable "mirador-java" "$JAVA_MCP_URL"
 
-PY_MCP_URL="${MIRADOR_PYTHON_MCP_URL:-http://localhost:8000/mcp}"
+PY_MCP_URL="${MIRADOR_PYTHON_MCP_URL:-http://localhost:8080/mcp}"
 mcp_add_http mirador-python "$PY_MCP_URL"
 [ "$DRY_RUN" = "0" ] && [ "$REMOVE" = "0" ] && probe_reachable "mirador-python" "$PY_MCP_URL"
 
