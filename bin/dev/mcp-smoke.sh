@@ -16,7 +16,7 @@
 #
 # Pre-requisites :
 #   1. Mirador stack running locally (./run.sh all in mirador-service-java)
-#   2. MCP servers wired : bin/dev/mcp-setup.sh has been run
+#   2. MCP servers wired : bin/dev/mcp-setup-infra.sh + bin/dev/mcp-setup-app.sh have been run
 #   3. claude CLI available + authenticated
 #
 # Usage :
