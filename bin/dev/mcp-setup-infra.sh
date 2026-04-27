@@ -176,12 +176,18 @@ mcp_add prometheus -e PROMETHEUS_URL="$PROMETHEUS_URL" -- npx -y prometheus-mcp 
 
 if [ -n "${GRAFANA_TOKEN:-}" ]; then
     GRAFANA_URL="${GRAFANA_URL:-http://localhost:3000}"
+    # The npm package is `mcp-grafana-npx` (animalnots) — NOT `mcp-grafana`
+    # which doesn't exist on the registry. Verified 2026-04-27 by trying
+    # both : `mcp-grafana` returns E404, `mcp-grafana-npx` connects fine
+    # given a valid GRAFANA_API_KEY (use a Grafana service-account token,
+    # NOT a legacy /api/auth/keys token — that endpoint is removed in
+    # Grafana >= 9.x).
     mcp_add grafana \
         -e GRAFANA_URL="$GRAFANA_URL" \
         -e GRAFANA_API_KEY="$GRAFANA_TOKEN" \
-        -- npx -y mcp-grafana
+        -- npx -y mcp-grafana-npx
 else
-    skip "grafana" "GRAFANA_TOKEN not set"
+    skip "grafana" "GRAFANA_TOKEN not set — create a service-account token at $GRAFANA_URL/api/serviceaccounts (Grafana >= 9.x)"
 fi
 
 # Loki — fewer maintained MCP packages exist ; skip until a stable one ships.
