@@ -21,12 +21,12 @@
 #   GITLAB_TOKEN          — GitLab PAT with api scope (project access at minimum)
 #   SONAR_TOKEN           — SonarCloud user token (Project > Security > Tokens)
 #   GRAFANA_TOKEN         — Grafana admin / viewer token (read-only fine)
-#   AUTH0_DOMAIN          — e.g. mirador.eu.auth0.com
+#   AUTH0_DOMAIN          — e.g. iris.eu.auth0.com
 #   AUTH0_CLIENT_ID       — Auth0 M2M app client ID (read-only API access)
 #   AUTH0_CLIENT_SECRET   — same M2M app client secret
 #
 # Optional env vars (override defaults) :
-#   POSTGRES_URL          — default postgresql://demo:demo@localhost:5432/mirador
+#   POSTGRES_URL          — default postgresql://demo:demo@localhost:5432/iris
 #   PROMETHEUS_URL        — default http://localhost:9091  (LGTM container Mimir)
 #   GRAFANA_URL           — default http://localhost:3000  (LGTM container Grafana)
 #   REDIS_URL             — default redis://localhost:6379
@@ -151,7 +151,7 @@ mcp_add() {
 echo "── Always-on MCP servers ──"
 
 # Filesystem — official Anthropic, lets Claude read/write files outside cwd if asked.
-mcp_add filesystem npx -y @modelcontextprotocol/server-filesystem ~/dev/mirador
+mcp_add filesystem npx -y @modelcontextprotocol/server-filesystem ~/dev/iris
 
 # ── Section 2 : Database (Postgres) ──────────────────────────────────
 
@@ -161,8 +161,8 @@ echo "── Database MCP servers ──"
 # @modelcontextprotocol/server-postgres takes the connection string as a
 # POSITIONAL argument, NOT as an env var. The previous --env URL=... was
 # silently ignored.
-POSTGRES_URL="${POSTGRES_URL:-postgresql://demo:demo@localhost:5432/mirador}"
-mcp_add postgres-mirador npx -y @modelcontextprotocol/server-postgres "$POSTGRES_URL"
+POSTGRES_URL="${POSTGRES_URL:-postgresql://demo:demo@localhost:5432/iris}"
+mcp_add postgres-iris npx -y @modelcontextprotocol/server-postgres "$POSTGRES_URL"
 
 # ── Section 3 : Observability (Prometheus / Mimir, Grafana, Loki) ────
 
@@ -234,7 +234,7 @@ echo ""
 echo "── Kubernetes MCP servers ──"
 
 # Generic kubectl wrapper — works against any cluster pointed at by ~/.kube/config.
-# For Iris : prod GKE = mirador-prod (europe-west1) ; local = kind-mirador-local.
+# For Iris : prod GKE = iris7-prod (europe-west1) ; local = kind-iris-local.
 if command -v kubectl >/dev/null 2>&1; then
     if [ -n "${K8S_CONTEXT:-}" ]; then
         mcp_add kubernetes -e CONTEXT="$K8S_CONTEXT" -- npx -y mcp-server-kubernetes
@@ -268,7 +268,7 @@ echo "── Infra MCP servers ──"
 
 # Kafka — `kafka-mcp` (npm) is a CLI for inspecting topics, NOT a stdio MCP
 # server. No usable community package fits ; skip with rationale. Use
-# `docker exec mirador-kafka kafka-topics.sh` for ad-hoc inspection.
+# `docker exec iris-kafka kafka-topics.sh` for ad-hoc inspection.
 skip "kafka" "kafka-mcp on npm is a CLI, not a stdio MCP server — no community package fits"
 
 # Redis — community `redis-mcp` (npm) ; passes URL via env var.

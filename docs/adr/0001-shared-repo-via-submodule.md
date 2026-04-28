@@ -11,7 +11,7 @@ and `iris-service-python` had grown to a tangible cost :
 - `docker-compose.yml` dev stack (postgres + redis + kafka + LGTM) 80 % identical
 - `bin/budget/{budget,ovh-alert,gcp-cost-audit,ovh-cost-audit}.sh` 100 % identical
 - `bin/cluster/ovh/{up,down,init-backend}.sh` 100 % identical
-- `bin/launchd/com.mirador.ovh-budget.plist` 100 % identical
+- `bin/launchd/org.iris.ovh-budget.plist` 100 % identical
 - CI templates (conventional-commits, docker multi-arch, sonar-scanner image
   build) drifting between repos
 
@@ -21,7 +21,7 @@ and Python (like infrastructure) ? Is having an infra repo a thing ?"
 Three options considered :
 - **(a)** Status quo + ADR documenting the duplication as intentional
 - **(b)** GitLab CI templates project (lightweight, CI-only sharing)
-- **(c)** Full `mirador-infra` repo (k8s + CI + scripts + everything)
+- **(c)** Full `iris-infra` repo (k8s + CI + scripts + everything)
 - **(d)** Submodule of a focused `iris-service-shared` repo (dev-stack + budget + CI templates)
 
 ## Decision
@@ -109,7 +109,7 @@ files identical between Java + Python.
 **Con** : restricted to `.yml` files — can't share docker-compose or
 shell scripts. Solves the smallest part of the problem.
 
-### (c) Full `mirador-infra` repo (everything)
+### (c) Full `iris-infra` repo (everything)
 **Pro** : maximum DRY.
 **Con** : k8s manifests / Dockerfiles legitimately differ between Java +
 Python. Forcing them into one repo creates parametric complexity worse than
