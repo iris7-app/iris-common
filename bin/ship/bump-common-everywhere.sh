@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # =============================================================================
 # bin/ship/bump-common-everywhere.sh — bump infra/common SHA across all
-# mirador1 consumer repos in one pass.
+# iris-7 consumer repos in one pass.
 #
 # Why : pattern α flat (cf. ADR-0060) implies each consumer pin its own
 # common SHA independently. When we patch common (fix critique, nouvelle
@@ -30,7 +30,7 @@
 #      a recap table is printed).
 #
 # Pre-flight checks (ALL must pass before any bump) :
-#   1. mirador-common's main is at-or-ahead-of origin/main (no unpushed commits)
+#   1. iris-common's main is at-or-ahead-of origin/main (no unpushed commits)
 #   2. Each consumer exists at <workspace>/<consumer-name>
 #   3. Each consumer has a clean working tree (no uncommitted)
 #   4. Each consumer's `dev` branch is at-or-behind origin/main (no unpushed
@@ -57,7 +57,7 @@ DRY_RUN=0
 CREATE_MR=1
 AUTO_MERGE=1
 WORKSPACE="${HOME}/dev/mirador"
-CONSUMERS_DEFAULT="mirador-service-shared,mirador-service-java,mirador-service-python,mirador-ui"
+CONSUMERS_DEFAULT="iris-service-shared,iris-service-java,iris-service-python,iris-ui"
 CONSUMERS="${CONSUMERS_DEFAULT}"
 
 while [ $# -gt 0 ]; do
@@ -82,9 +82,9 @@ while [ $# -gt 0 ]; do
 done
 
 # ── Locate common ────────────────────────────────────────────────────────────
-COMMON_DIR="${WORKSPACE}/mirador-common"
+COMMON_DIR="${WORKSPACE}/iris-common"
 if [ ! -d "${COMMON_DIR}/.git" ]; then
-    echo "ERROR: mirador-common not found at ${COMMON_DIR}" >&2
+    echo "ERROR: iris-common not found at ${COMMON_DIR}" >&2
     echo "Pass --workspace <dir> if your repos live elsewhere." >&2
     exit 1
 fi
@@ -262,7 +262,7 @@ for consumer in "${CONSUMERS_OK[@]}"; do
         fi
         MR_URL=$(glab mr create \
             --title "chore(submodule): bump common SHA → ${COMMON_SHORT}" \
-            --description "Auto-bump from \`bump-common-everywhere.sh\`. Common SHA → [\`${COMMON_SHORT}\`](https://gitlab.com/mirador1/mirador-common/-/commit/${COMMON_LOCAL})." \
+            --description "Auto-bump from \`bump-common-everywhere.sh\`. Common SHA → [\`${COMMON_SHORT}\`](https://gitlab.com/iris-7/iris-common/-/commit/${COMMON_LOCAL})." \
             --target-branch "${DEFAULT_BRANCH}" \
             --remove-source-branch=false 2>&1 | grep -oE 'https://gitlab.com/[^ ]+' | head -1)
         if [ -n "${MR_URL}" ]; then
@@ -278,7 +278,7 @@ for consumer in "${CONSUMERS_OK[@]}"; do
                     TOKEN=$(grep "^[[:space:]]*token:" "${HOME}/Library/Application Support/glab-cli/config.yml" 2>/dev/null | awk '{print $2}')
                 fi
                 if [ -n "${TOKEN}" ] && [ -n "${MR_ID}" ]; then
-                    PROJECT_PATH="mirador1%2F${consumer}"
+                    PROJECT_PATH="iris-7%2F${consumer}"
                     # Retry up to 3 times with 2s delay : freshly-created MRs sometimes
                     # need a moment for GitLab to register the head_pipeline before
                     # accepting merge_when_pipeline_succeeds (returns 422 ci_must_pass).

@@ -1,4 +1,4 @@
-# TASKS — mirador-common
+# TASKS — iris-common
 
 Open work only. Per `~/.claude/CLAUDE.md` rules : universal
 cross-repo conventions (release scripts, ADR drift tooling,
@@ -11,15 +11,15 @@ common layer.
 
 ## 🌀 IRIS REBRAND (in flight 2026-04-28)
 
-Coordinated rename Mirador → Iris. See full context + phases in
-[Java TASKS.md](https://gitlab.com/mirador1/mirador-service-java/-/blob/main/TASKS.md#-iris-rebrand-in-flight-2026-04-28).
+Coordinated rename Iris → Iris. See full context + phases in
+[Java TASKS.md](https://gitlab.com/iris-7/iris-service-java/-/blob/main/TASKS.md#-iris-rebrand-in-flight-2026-04-28).
 
 Common-side scope :
 
 - **Code-level** : 23 files, 208 refs to "mirador". Affects :
   - ADR cross-references in `docs/adr/` (ADR-0001 / 0057 / 0060 /
-    0061 / 0063 all reference "Mirador" or "mirador1")
-  - `bin/ship/*` scripts that hardcode `mirador1` GitLab group
+    0061 / 0063 all reference "Iris" or "iris-7")
+  - `bin/ship/*` scripts that hardcode `iris-7` GitLab group
   - `renovate-base.json` if it references project names
   - `ci-templates/conventional-commits.yml` if it has project hints
   - The flat ADR index `docs/adr/README.md`
@@ -36,9 +36,9 @@ locked = `02o-iris-final.svg`. Tagline = `7 FACETS`.
 ## 🟡 Stability-check ADR drift (resolved 2026-04-28)
 
 Java-side stability-check 2026-04-28 surfaced ADR flat-index drift
-in mirador-service-java ; resolved by `infra/common/bin/dev/regen-adr-index.sh --in-place`
-([!248](https://gitlab.com/mirador1/mirador-service-java/-/merge_requests/248)).
+in iris-service-java ; resolved by `infra/common/bin/dev/regen-adr-index.sh --in-place`
+([!248](https://gitlab.com/iris-7/iris-service-java/-/merge_requests/248)).
 
-The same regen script applies to mirador-common itself if its own
+The same regen script applies to iris-common itself if its own
 `docs/adr/README.md` drifts ; cron-checking it is a future
 nice-to-have but not in scope today.

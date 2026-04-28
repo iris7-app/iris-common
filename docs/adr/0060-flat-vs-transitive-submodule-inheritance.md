@@ -2,22 +2,22 @@
 
 **Status** : Accepted
 **Date** : 2026-04-26
-**Related repos** : `mirador-service-java`, `mirador-service-python`, `mirador-ui`, `mirador-service-shared`, `mirador-common`
+**Related repos** : `iris-service-java`, `iris-service-python`, `iris-ui`, `iris-service-shared`, `iris-common`
 
 ## Context
 
-When [`mirador-common`](https://gitlab.com/mirador1/mirador-common) was extracted from
-[`mirador-service-shared`](https://gitlab.com/mirador1/mirador-service-shared) on
+When [`iris-common`](https://gitlab.com/iris-7/iris-common) was extracted from
+[`iris-service-shared`](https://gitlab.com/iris-7/iris-service-shared) on
 2026-04-26 (per the rationale captured in the [shared-repo ADR-0001](0001-shared-repo-via-submodule.md)),
 the family ended up needing **two shared layers** :
 
-- `mirador-common` — universal cross-repo conventions (release scripts,
+- `iris-common` — universal cross-repo conventions (release scripts,
   ADR tooling, Conventional Commits CI template, Renovate base) ;
   applies to all 4 repos including UI.
-- `mirador-service-shared` — backend infrastructure (clusters,
+- `iris-service-shared` — backend infrastructure (clusters,
   terraform, K8s manifests, OTel collector, postgres + kafka + redis
   compose stack, observability dashboards) ; applies only to
-  `mirador-service-java` + `mirador-service-python`.
+  `iris-service-java` + `iris-service-python`.
 
 The question : **how do backend repos (java + python) attach common ?**
 Two architectures were on the table :
@@ -37,14 +37,14 @@ Two architectures were on the table :
 **α** — each consumer that needs common attaches it as **its own
 direct submodule** at `infra/common/`. Same path everywhere :
 
-- `mirador-service-java/infra/common/`         → mirador-common (own pin)
-- `mirador-service-java/infra/shared/`         → mirador-service-shared (own pin)
-- `mirador-service-python/infra/common/`       → mirador-common (own pin)
-- `mirador-service-python/infra/shared/`       → mirador-service-shared (own pin)
-- `mirador-ui/infra/common/`                   → mirador-common (own pin)
-- `mirador-service-shared/infra/common/`       → mirador-common (self-reference)
+- `iris-service-java/infra/common/`         → iris-common (own pin)
+- `iris-service-java/infra/shared/`         → iris-service-shared (own pin)
+- `iris-service-python/infra/common/`       → iris-common (own pin)
+- `iris-service-python/infra/shared/`       → iris-service-shared (own pin)
+- `iris-ui/infra/common/`                   → iris-common (own pin)
+- `iris-service-shared/infra/common/`       → iris-common (self-reference)
 
-`mirador-service-shared` itself ALSO has common as a submodule (so that
+`iris-service-shared` itself ALSO has common as a submodule (so that
 its own ADR-drift checks + release scripts work) — but its SHA pin is
 independent of any consumer's pin.
 
@@ -93,9 +93,9 @@ independent of any consumer's pin.
 
 ### Neutral
 
-- **Cross-repo references still work** : ADR-0055 in mirador-common
+- **Cross-repo references still work** : ADR-0055 in iris-common
   is now linkable from any consumer via
-  `https://gitlab.com/mirador1/mirador-common/-/blob/main/docs/adr/0055-shell-based-release-automation.md` —
+  `https://gitlab.com/iris-7/iris-common/-/blob/main/docs/adr/0055-shell-based-release-automation.md` —
   same as before its move.
 - **Both options ARE versioned** : submodule = pinned SHA in both α and
   β. The difference is who controls the pin (the consumer in α, or the
@@ -131,7 +131,7 @@ exists to prevent.
 
 - [ADR-0001](0001-shared-repo-via-submodule.md) — the underlying submodule pattern
 - [ADR-0057](0057-polyrepo-vs-monorepo.md) — why polyrepo (not monorepo) in the first place
-- [`mirador-common/README.md`](../../README.md) — leaf submodule overview
-- [`mirador-service-shared/README.md`](https://gitlab.com/mirador1/mirador-service-shared/-/blob/main/README.md) — backend submodule overview
+- [`iris-common/README.md`](../../README.md) — leaf submodule overview
+- [`iris-service-shared/README.md`](https://gitlab.com/iris-7/iris-service-shared/-/blob/main/README.md) — backend submodule overview
 - 2026-04-26 split commit on shared-service : `b1df97f` (deletes the universal scripts + adds infra/common/ submodule self-reference)
-- 2026-04-26 bootstrap of mirador-common : `8028236` (initial extraction)
+- 2026-04-26 bootstrap of iris-common : `8028236` (initial extraction)

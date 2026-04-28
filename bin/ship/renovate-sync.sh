@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # renovate-sync.sh — sync common Renovate config from shared/renovate-base.json
-# into each mirador1 repo's renovate.json.
+# into each iris-7 repo's renovate.json.
 #
 # Strategy : the shared base file holds the keys that are common across all
 # 4 repos (extends, timezone, labels, prHourlyLimit, vulnerabilityAlerts,
@@ -28,10 +28,10 @@ set -euo pipefail
 
 # ── Repos ────────────────────────────────────────────────────────────────────
 declare -A REPO_PATHS=(
-    [java]="/Users/benoitbesson/dev/workspace-modern/mirador-service-java"
-    [python]="/Users/benoitbesson/dev/workspace-modern/mirador-service-python"
-    [ui]="/Users/benoitbesson/dev/js/mirador-ui"
-    [shared]="/Users/benoitbesson/dev/workspace-modern/mirador-service-shared"
+    [java]="/Users/benoitbesson/dev/workspace-modern/iris-service-java"
+    [python]="/Users/benoitbesson/dev/workspace-modern/iris-service-python"
+    [ui]="/Users/benoitbesson/dev/js/iris-ui"
+    [shared]="/Users/benoitbesson/dev/workspace-modern/iris-service-shared"
 )
 
 # Locate base file (relative to this script — works whether script lives in

@@ -5,8 +5,8 @@ Status: Accepted
 
 ## Context
 
-The mirador1 polyrepo (mirador-service-java + mirador-service-python +
-mirador-ui + mirador-service-shared + mirador-common) is portfolio-
+The iris-7 polyrepo (iris-service-java + iris-service-python +
+iris-ui + iris-service-shared + iris-common) is portfolio-
 themed — recruiters and architects browsing the repos for 30 seconds
 form a first impression from the README and the most recent
 `stable-v*` tag annotation.
@@ -65,8 +65,8 @@ annotation carries TWO blocks beyond the bare-bones "what changed" :
    - 🛠 **DevX** — tooling improvements, onboarding-friction wins.
 
 The same 10 axes appear at the **TOP** of every portfolio-facing
-README (`mirador-service-java`, `mirador-service-python`,
-`mirador-ui`) as a `> What this project demonstrates mastery of`
+README (`iris-service-java`, `iris-service-python`,
+`iris-ui`) as a `> What this project demonstrates mastery of`
 blockquote — sitting ABOVE the badges, ABOVE the project description.
 Each bullet is dense with the project's actual specifics (not generic
 claims).
@@ -77,8 +77,8 @@ mastery (the destination). They drift fast — update the README
 bullet whenever a new tag annotation moves the corresponding axis
 forward.
 
-Skipped on infrastructure-only repos (`mirador-common`,
-`mirador-service-shared`) — they are not standalone portfolio
+Skipped on infrastructure-only repos (`iris-common`,
+`iris-service-shared`) — they are not standalone portfolio
 pieces ; their READMEs focus on "what's inside + how to consume".
 
 ## Why these 10 axes ?
@@ -163,9 +163,9 @@ WHY + the cross-repo binding decision.
 ## Examples
 
 Two reference tags shipped on 2026-04-27 with the new format :
-- [`stable-v1.2.10`](https://gitlab.com/mirador1/mirador-service-java/-/tags/stable-v1.2.10)
+- [`stable-v1.2.10`](https://gitlab.com/iris-7/iris-service-java/-/tags/stable-v1.2.10)
   (Java) — Spring AI streamable-http + Javadoc fix.
-- [`stable-py-v0.6.9`](https://gitlab.com/mirador1/mirador-service-python/-/tags/stable-py-v0.6.9)
+- [`stable-py-v0.6.9`](https://gitlab.com/iris-7/iris-service-python/-/tags/stable-py-v0.6.9)
   (Python) — X-API-Key middleware (parity with Java).
 
 Both tag annotations show the full Verified + Themes maîtrisés blocks.

@@ -20,7 +20,7 @@ Angular zoneless. Examples : a `git reset --hard` safety check
 (`bin/dev/regen-adr-index.sh`), a Conventional-Commits CI template,
 the Renovate base config.
 
-Putting these in `mirador-service-shared` (the backend infra repo)
+Putting these in `iris-service-shared` (the backend infra repo)
 forces UI to pull in 90% irrelevant content (terraform, K8s, OTel
 collector, postgres) just to use 2 small scripts. Putting them in
 each consumer repo creates 3-4 copies that drift.
@@ -36,8 +36,8 @@ ui, AND shared-service itself).
 | `bin/ship/changelog.sh` | Generate CHANGELOG entry from Conventional Commits (`--tag-prefix` flag for per-repo tag namespaces) | every repo |
 | `bin/ship/gitlab-release.sh` | Create GitLab Release object from a tag | every repo |
 | `bin/ship/renovate-sync.sh` | Sync `renovate.json` across consumers from `renovate-base.json` | maintainer (run from any repo) |
-| `bin/ship/check-default-branch.sh` | Verify all 4 mirador1 projects have `default_branch=main` | maintainer / pre-tag |
-| `bin/ship/bump-common-everywhere.sh` | Bump `infra/common` SHA across all 4 consumers in one pass (commit + push + MR + auto-merge) | maintainer (run from `mirador-common`) |
+| `bin/ship/check-default-branch.sh` | Verify all 4 iris-7 projects have `default_branch=main` | maintainer / pre-tag |
+| `bin/ship/bump-common-everywhere.sh` | Bump `infra/common` SHA across all 4 consumers in one pass (commit + push + MR + auto-merge) | maintainer (run from `iris-common`) |
 | `bin/dev/regen-adr-index.sh` | Regenerate `docs/adr/README.md` flat-index table from ADR files (`--check` for CI drift) | every repo (per-repo ADRs) |
 | `ci-templates/conventional-commits.yml` | GitLab CI template enforcing Conventional Commits on every MR | every repo (`include:` from `.gitlab-ci.yml`) |
 | `renovate-base.json` | Common Renovate config, synced into each repo's `renovate.json` via `bin/ship/renovate-sync.sh` | every repo |
@@ -50,19 +50,19 @@ ui, AND shared-service itself).
 
 Backend-specific infrastructure (clusters, terraform, K8s manifests,
 OTel collector, postgres+kafka+redis compose stack, observability
-dashboards) lives in **`mirador-service-shared`**. It is consumed
+dashboards) lives in **`iris-service-shared`**. It is consumed
 by the backend repos (java + python) but NOT by ui — UI doesn't run
 backends, doesn't deploy K8s clusters, doesn't manage cloud cost.
 
-The split (this repo = universal ; mirador-service-shared = backend)
+The split (this repo = universal ; iris-service-shared = backend)
 formalises the boundary so each consumer pulls only what it needs.
 
 ## How consumers use this
 
 ```bash
-# In mirador-service-java, mirador-service-python, mirador-ui, mirador-service-shared :
-git submodule add https://gitlab.com/mirador1/mirador-common.git infra/common
-git commit -m "chore(submodule): add mirador-common"
+# In iris-service-java, iris-service-python, iris-ui, iris-service-shared :
+git submodule add https://gitlab.com/iris-7/iris-common.git infra/common
+git commit -m "chore(submodule): add iris-common"
 
 # Then call scripts via :
 infra/common/bin/ship/pre-sync.sh
@@ -74,8 +74,8 @@ infra/common/bin/dev/regen-adr-index.sh --check
 ## How to update
 
 ```bash
-# In mirador-common :
-$ cd ~/dev/mirador/mirador-common
+# In iris-common :
+$ cd ~/dev/iris/iris-common
 $ git switch main
 # … edit, commit, push …
 $ git push origin main
@@ -94,7 +94,7 @@ runs pre-flight checks first, then commits + pushes + creates MR with
 auto-merge per consumer) :
 
 ```bash
-$ cd ~/dev/mirador/mirador-common
+$ cd ~/dev/iris/iris-common
 $ bin/ship/bump-common-everywhere.sh           # creates MRs + auto-merge
 $ bin/ship/bump-common-everywhere.sh --dry-run # preview without changes
 ```
@@ -105,7 +105,7 @@ consumer's own `stable-<prefix>-vX.Y.Z` when a milestone lands.
 ## Adding to a new consumer repo
 
 ```bash
-git submodule add https://gitlab.com/mirador1/mirador-common.git infra/common
+git submodule add https://gitlab.com/iris-7/iris-common.git infra/common
 git submodule update --init infra/common
 ```
 
@@ -113,7 +113,7 @@ Then add to `.gitlab-ci.yml` :
 
 ```yaml
 include:
-  - project: 'mirador1/mirador-common'
+  - project: 'iris-7/iris-common'
     ref: main
     file: '/ci-templates/conventional-commits.yml'
 ```
@@ -125,8 +125,8 @@ content directly if you prefer pin-by-SHA over `ref: main`.)
 
 - [CHANGELOG](CHANGELOG.md) — release notes
 - [ADR-0001 — Shared repo via submodule](docs/adr/0001-shared-repo-via-submodule.md)
-- [`mirador-service-shared`](https://gitlab.com/mirador1/mirador-service-shared) — backend infra (clusters, terraform, K8s, observability)
-- Sibling repos : [java](https://gitlab.com/mirador1/mirador-service-java) · [python](https://gitlab.com/mirador1/mirador-service-python) · [ui](https://gitlab.com/mirador1/mirador-ui)
+- [`iris-service-shared`](https://gitlab.com/iris-7/iris-service-shared) — backend infra (clusters, terraform, K8s, observability)
+- Sibling repos : [java](https://gitlab.com/iris-7/iris-service-java) · [python](https://gitlab.com/iris-7/iris-service-python) · [ui](https://gitlab.com/iris-7/iris-ui)
 
 ## License
 

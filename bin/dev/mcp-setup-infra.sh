@@ -2,8 +2,8 @@
 # =============================================================================
 # bin/dev/mcp-setup-infra.sh — wire up community (infra) MCP servers
 #
-# Per shared ADR-0062 (mirador-service-java/docs/adr/0062-…) :
-#   - APPLICATION MCP servers (mirador-java, mirador-python) expose what the
+# Per shared ADR-0062 (iris-service-java/docs/adr/0062-…) :
+#   - APPLICATION MCP servers (iris-java, iris-python) expose what the
 #     apps PRODUCE in-process — wired by the SIBLING `mcp-setup-app.sh`
 #     because they require the backends to be running.
 #   - COMMUNITY MCP servers (postgres, prometheus, grafana, gitlab, github,
@@ -11,7 +11,7 @@
 #     here. They don't need the backends, so this script can run any time.
 #
 # Why split ? `mcp-setup-app.sh` only makes sense after `./mvnw spring-boot:run`
-# (Java) or `uv run mirador-service` (Python) ; running it before would wire
+# (Java) or `uv run iris-service` (Python) ; running it before would wire
 # unhealthy entries that show as ✗ Failed in `claude mcp list`. The infra
 # script has no such dependency — postgres-demo / kafka / redis / LGTM
 # containers handle their own readiness.
@@ -234,7 +234,7 @@ echo ""
 echo "── Kubernetes MCP servers ──"
 
 # Generic kubectl wrapper — works against any cluster pointed at by ~/.kube/config.
-# For Mirador : prod GKE = mirador-prod (europe-west1) ; local = kind-mirador-local.
+# For Iris : prod GKE = mirador-prod (europe-west1) ; local = kind-mirador-local.
 if command -v kubectl >/dev/null 2>&1; then
     if [ -n "${K8S_CONTEXT:-}" ]; then
         mcp_add kubernetes -e CONTEXT="$K8S_CONTEXT" -- npx -y mcp-server-kubernetes
@@ -292,5 +292,5 @@ elif [ "$REMOVE" = "1" ]; then
     echo "${Y}REMOVE${N} done. Re-run without --remove to re-wire."
 else
     echo "${G}✓ Infra MCP setup complete${N}. List with : claude mcp list"
-    echo "${D}  Application MCPs (mirador-java, mirador-python) : run bin/dev/mcp-setup-app.sh AFTER starting the backends.${N}"
+    echo "${D}  Application MCPs (iris-java, iris-python) : run bin/dev/mcp-setup-app.sh AFTER starting the backends.${N}"
 fi

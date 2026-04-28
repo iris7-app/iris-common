@@ -1,6 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "description": "Common renovate config for all mirador1 repos. Synced into each repo's renovate.json by bin/ship/renovate-sync.sh — DO NOT edit a repo's renovate.json's common fields directly, edit this file then re-run sync. Repo-specific packageRules are preserved (appended after the common rules below).",
+  "description": "Common renovate config for all iris-7 repos. Synced into each repo's renovate.json by bin/ship/renovate-sync.sh — DO NOT edit a repo's renovate.json's common fields directly, edit this file then re-run sync. Repo-specific packageRules are preserved (appended after the common rules below).",
   "extends": [
     "config:recommended",
     ":semanticCommits",

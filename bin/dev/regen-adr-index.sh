@@ -2,7 +2,7 @@
 # =============================================================================
 # bin/dev/regen-adr-index.sh — auto-regenerate the ADR flat index table.
 #
-# Universal version usable from any mirador1 repo. Scans the consumer's
+# Universal version usable from any iris-7 repo. Scans the consumer's
 # `docs/adr/[0-9][0-9][0-9][0-9]-*.md` files (resolved via `git rev-parse
 # --show-toplevel`, NOT relative to the script's location, so it works
 # both when called directly in shared AND when called via the submodule

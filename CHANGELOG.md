@@ -1,14 +1,14 @@
 # Changelog
 
-All notable changes to **mirador-common** — universal cross-repo
-conventions for the [mirador1](https://gitlab.com/mirador1) family.
+All notable changes to **iris-common** — universal cross-repo
+conventions for the [iris-7](https://gitlab.com/iris-7) family.
 
 This is a leaf submodule (zero dependencies) consumed by every repo.
 Format : a lightly-formatted summary per `common-vX.Y.Z` tag (when we
 start tagging — currently rolling on `main` only since consumers pin
 SHAs, not tags).
 
-## 2026-04-26 — Initial extraction from `mirador-service-shared`
+## 2026-04-26 — Initial extraction from `iris-service-shared`
 
 ### ✨ Features
 
@@ -23,7 +23,7 @@ SHAs, not tags).
 
 ### 📚 Documentation
 
-- 4 cross-cutting ADRs migrated from `mirador-service-shared` :
+- 4 cross-cutting ADRs migrated from `iris-service-shared` :
   - 0001 — Shared repo via submodule (the pattern this repo embodies)
   - 0055 — Shell-based release automation (no semantic-release)
   - 0057 — Polyrepo vs monorepo (kept polyrepo)
@@ -31,13 +31,13 @@ SHAs, not tags).
 
 ### Why extract
 
-`mirador-service-shared` was originally a single shared submodule for
+`iris-service-shared` was originally a single shared submodule for
 the backend (Java + Python). When UI started needing the same release
 scripts + Conventional-Commits CI template, putting them in
-`mirador-service-shared` would force UI to pull 90% irrelevant content
+`iris-service-shared` would force UI to pull 90% irrelevant content
 (terraform, K8s, OTel, postgres). Splitting into two submodules :
 
-- `mirador-common` (this repo) = universal, leaf, consumed by 4 repos
-- `mirador-service-shared` = backend infra, consumed by java + python (NOT ui)
+- `iris-common` (this repo) = universal, leaf, consumed by 4 repos
+- `iris-service-shared` = backend infra, consumed by java + python (NOT ui)
 
 UI gets only what it needs. Backend repos get both.

@@ -2,17 +2,17 @@
 
 **Status** : Accepted
 **Date** : 2026-04-26
-**Related repos** : `mirador-service-java`, `mirador-service-python`, `mirador-ui`, `mirador-service-shared`, `mirador-common`
+**Related repos** : `iris-service-java`, `iris-service-python`, `iris-ui`, `iris-service-shared`, `iris-common`
 
 ## Context
 
-The mirador1 family hosts 5 git repos that release independently :
+The iris-7 family hosts 5 git repos that release independently :
 
-- `mirador-service-java` — Spring Boot 4 backend
-- `mirador-service-python` — FastAPI backend (sibling of java)
-- `mirador-ui` — Angular 21 frontend
-- `mirador-service-shared` — backend infra submodule (rolls on `main`)
-- `mirador-common` — universal conventions submodule (rolls on `main`)
+- `iris-service-java` — Spring Boot 4 backend
+- `iris-service-python` — FastAPI backend (sibling of java)
+- `iris-ui` — Angular 21 frontend
+- `iris-service-shared` — backend infra submodule (rolls on `main`)
+- `iris-common` — universal conventions submodule (rolls on `main`)
 
 Each repo has its own release cadence : java tags every 1-2 days during
 active dev, ui tags every 3-5 days, python tags 2-3 days, shared
@@ -31,14 +31,14 @@ Each consumer repo uses its own **prefix-distinguished tag namespace** :
 
 | Repo | Prefix | Example | Tagged at |
 |---|---|---|---|
-| `mirador-service-java`   | `stable-v`     | `stable-v1.2.3`     | every green stability checkpoint |
-| `mirador-ui`             | `stable-v`     | `stable-v1.0.5`     | every green stability checkpoint |
-| `mirador-service-python` | `stable-py-v`  | `stable-py-v0.7.0`  | every green stability checkpoint |
-| `mirador-service-shared` | (none, rolls on main) | — | consumers pin SHAs |
-| `mirador-common`         | (none, rolls on main) | — | consumers pin SHAs |
+| `iris-service-java`   | `stable-v`     | `stable-v1.2.3`     | every green stability checkpoint |
+| `iris-ui`             | `stable-v`     | `stable-v1.0.5`     | every green stability checkpoint |
+| `iris-service-python` | `stable-py-v`  | `stable-py-v0.7.0`  | every green stability checkpoint |
+| `iris-service-shared` | (none, rolls on main) | — | consumers pin SHAs |
+| `iris-common`         | (none, rolls on main) | — | consumers pin SHAs |
 
 **Rule** : when a NEW consumer repo is added to the family (e.g. a
-hypothetical `mirador-service-go` or `mirador-mobile`), pick a prefix
+hypothetical `iris-service-go` or `mirador-mobile`), pick a prefix
 that **disambiguates against existing prefixes** :
 
 - If it's the canonical service for its language family, use `stable-v`

@@ -15,7 +15,7 @@
 #        same DB state.
 #
 # Pre-requisites :
-#   1. Mirador stack running locally (./run.sh all in mirador-service-java)
+#   1. Iris stack running locally (./run.sh all in iris-service-java)
 #   2. MCP servers wired : bin/dev/mcp-setup-infra.sh + bin/dev/mcp-setup-app.sh have been run
 #   3. claude CLI available + authenticated
 #
@@ -76,71 +76,71 @@ probe() {
     fi
 }
 
-# ── Section 1 : Mirador Java backend (in-process MCP) ───────────────
+# ── Section 1 : Iris Java backend (in-process MCP) ───────────────
 
 if [ -z "${SKIP_JAVA:-}" ]; then
-    echo "── Mirador Java MCP — read-only ──"
+    echo "── Iris Java MCP — read-only ──"
 
     # Health check — should return UP if the app is healthy
     probe "java health" \
-        "Use the mirador-java MCP server's get_health tool and tell me only the top-level status, nothing else." \
+        "Use the iris-java MCP server's get_health tool and tell me only the top-level status, nothing else." \
         "UP|status"
 
     # OpenAPI summary — should mention /orders or /products
     probe "java openapi summary" \
-        "Use mirador-java's get_openapi_spec with summary=true. Reply with the list of paths only." \
+        "Use iris-java's get_openapi_spec with summary=true. Reply with the list of paths only." \
         "/orders|/products|/customers"
 
     # Recent orders — read-only, will return [] if none
     probe "java list_recent_orders" \
-        "Use mirador-java's list_recent_orders with limit=5. Tell me how many orders were returned (0 is OK)." \
+        "Use iris-java's list_recent_orders with limit=5. Tell me how many orders were returned (0 is OK)." \
         "[0-9]+"
 
     # Customer 360 — assumes a demo seeded customer 1 ; if not present, error response is acceptable
     probe "java get_customer_360" \
-        "Use mirador-java's get_customer_360 with id=1. If the customer doesn't exist, say 'not found' ; otherwise tell me their order count." \
+        "Use iris-java's get_customer_360 with id=1. If the customer doesn't exist, say 'not found' ; otherwise tell me their order count." \
         "order count|not found|orderCount"
 
     # Logs — should return at least the recent app startup messages
     probe "java tail_logs" \
-        "Use mirador-java's tail_logs with n=5. Reply with just 'logs received' if you got any log lines." \
+        "Use iris-java's tail_logs with n=5. Reply with just 'logs received' if you got any log lines." \
         "logs received|no logs"
 
     # Metrics — JVM heap is always present
     probe "java get_metrics jvm.memory.used" \
-        "Use mirador-java's get_metrics with nameFilter='jvm.memory.used'. Tell me only whether you got a numeric value (yes/no)." \
+        "Use iris-java's get_metrics with nameFilter='jvm.memory.used'. Tell me only whether you got a numeric value (yes/no)." \
         "yes|numeric|value"
 
     # Find low stock products — read-only, predicate query
     probe "java find_low_stock_products" \
-        "Use mirador-java's find_low_stock_products with threshold=10. Reply with just the count (0 is OK)." \
+        "Use iris-java's find_low_stock_products with threshold=10. Reply with just the count (0 is OK)." \
         "[0-9]+"
 fi
 
-# ── Section 2 : Mirador Python backend (in-process MCP) ─────────────
+# ── Section 2 : Iris Python backend (in-process MCP) ─────────────
 
 if [ -z "${SKIP_PYTHON:-}" ]; then
     echo ""
-    echo "── Mirador Python MCP — read-only ──"
+    echo "── Iris Python MCP — read-only ──"
 
     probe "python health" \
-        "Use mirador-python's get_health tool. Reply with only the top-level status." \
+        "Use iris-python's get_health tool. Reply with only the top-level status." \
         "UP|healthy|status"
 
     probe "python list_recent_orders" \
-        "Use mirador-python's list_recent_orders with limit=5. How many orders were returned?" \
+        "Use iris-python's list_recent_orders with limit=5. How many orders were returned?" \
         "[0-9]+"
 
     probe "python find_low_stock_products" \
-        "Use mirador-python's find_low_stock_products tool with threshold=10. Reply with the count." \
+        "Use iris-python's find_low_stock_products tool with threshold=10. Reply with the count." \
         "[0-9]+"
 
     probe "python tail_logs" \
-        "Use mirador-python's tail_logs with n=5. Reply 'logs received' if any were returned." \
+        "Use iris-python's tail_logs with n=5. Reply 'logs received' if any were returned." \
         "logs received|no logs"
 
     probe "python get_openapi_spec" \
-        "Use mirador-python's get_openapi_spec with summary=true. Did you find the /orders path? (yes/no)" \
+        "Use iris-python's get_openapi_spec with summary=true. Did you find the /orders path? (yes/no)" \
         "yes|/orders"
 fi
 
@@ -160,20 +160,20 @@ if [ -z "${SKIP_INFRA:-}" ]; then
         "Use prometheus MCP to query 'up'. Reply with 'metric received' if you got at least one sample." \
         "metric received|up\b|value"
 
-    # GitLab — list open MRs on mirador-service-java (assumes GITLAB_TOKEN set)
+    # GitLab — list open MRs on iris-service-java (assumes GITLAB_TOKEN set)
     if claude mcp list 2>/dev/null | grep -q "^gitlab"; then
-        probe "gitlab list mirador1/mirador-service-java MRs" \
-            "Use gitlab MCP to list open merge requests on mirador1/mirador-service-java. Reply with 'count: N'." \
+        probe "gitlab list iris-7/iris-service-java MRs" \
+            "Use gitlab MCP to list open merge requests on iris-7/iris-service-java. Reply with 'count: N'." \
             "count:|merge request|MR"
     else
         printf "  ${Y}○${N} %-60s ${D}gitlab MCP not wired${N}\n" "gitlab list MRs"
     fi
 
-    # GitHub — list mirador1/mirador-service-java repo info
+    # GitHub — list iris-7/iris-service-java repo info
     if claude mcp list 2>/dev/null | grep -q "^github"; then
-        probe "github read mirador1/mirador-service-java" \
-            "Use github MCP to get info about the mirador1/mirador-service-java repository. What's its description?" \
-            "Spring|backend|Mirador|java"
+        probe "github read iris-7/iris-service-java" \
+            "Use github MCP to get info about the iris-7/iris-service-java repository. What's its description?" \
+            "Spring|backend|Iris|java"
     else
         printf "  ${Y}○${N} %-60s ${D}github MCP not wired${N}\n" "github read repo"
     fi
@@ -181,7 +181,7 @@ if [ -z "${SKIP_INFRA:-}" ]; then
     # SonarCloud — get latest analysis
     if claude mcp list 2>/dev/null | grep -q "^sonar"; then
         probe "sonar quality gate" \
-            "Use the sonar MCP to get the quality gate status of project mirador1_mirador-service-java. Reply with the status." \
+            "Use the sonar MCP to get the quality gate status of project iris-7_iris-service-java. Reply with the status." \
             "OK|ERROR|PASSED|FAILED|none"
     else
         printf "  ${Y}○${N} %-60s ${D}sonar MCP not wired${N}\n" "sonar quality gate"
