@@ -38,7 +38,7 @@ Each consumer repo uses its own **prefix-distinguished tag namespace** :
 | `iris-common`         | (none, rolls on main) | — | consumers pin SHAs |
 
 **Rule** : when a NEW consumer repo is added to the family (e.g. a
-hypothetical `iris-service-go` or `mirador-mobile`), pick a prefix
+hypothetical `iris-service-go` or `iris-mobile`), pick a prefix
 that **disambiguates against existing prefixes** :
 
 - If it's the canonical service for its language family, use `stable-v`

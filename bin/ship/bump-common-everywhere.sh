@@ -20,7 +20,7 @@
 #   --auto-merge      Arm auto-merge on the created MR (default = yes when --no-mr is absent).
 #   --no-auto-merge   Skip the auto-merge step (just create MR, leave it open).
 #   --consumers REPO1,REPO2,...  Override the consumer list. Default = all 4.
-#   --workspace DIR   Override the workspace root. Default = ~/dev/mirador.
+#   --workspace DIR   Override the workspace root. Default = ~/dev/iris.
 #   --help            Show this help.
 #
 # Exit codes :
@@ -56,7 +56,7 @@ info()  { printf "  ${B}ℹ${N} %s\n" "$1"; }
 DRY_RUN=0
 CREATE_MR=1
 AUTO_MERGE=1
-WORKSPACE="${HOME}/dev/mirador"
+WORKSPACE="${HOME}/dev/iris"
 CONSUMERS_DEFAULT="iris-service-shared,iris-service-java,iris-service-python,iris-ui"
 CONSUMERS="${CONSUMERS_DEFAULT}"
 

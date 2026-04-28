@@ -152,7 +152,7 @@ if [ -z "${SKIP_INFRA:-}" ]; then
 
     # Postgres — list tables (read-only catalog query)
     probe "postgres list tables" \
-        "Use the postgres-mirador MCP server to list the tables in the public schema. Reply with just 'orders' if it's there." \
+        "Use the postgres-iris MCP server to list the tables in the public schema. Reply with just 'orders' if it's there." \
         "orders|customer|product"
 
     # Prometheus — query the up{} metric (always present)

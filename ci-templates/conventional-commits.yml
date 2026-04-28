@@ -1,4 +1,4 @@
-# Conventional Commits CI template — included by all 3 mirador repos.
+# Conventional Commits CI template — included by all 3 iris repos.
 # Validates merge-request-event commits (the lefthook hook catches local
 # commits ; this is the second-line backstop in CI).
 #

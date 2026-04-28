@@ -19,8 +19,8 @@
 #   cd ~/dev/iris/iris-service-python && uv run iris-service
 #
 # Optional env vars (override defaults) :
-#   MIRADOR_JAVA_MCP_URL    — default http://localhost:8080/mcp
-#   MIRADOR_PYTHON_MCP_URL  — default http://localhost:8080/mcp (shared port
+#   IRIS_JAVA_MCP_URL    — default http://localhost:8080/mcp
+#   IRIS_PYTHON_MCP_URL  — default http://localhost:8080/mcp (shared port
 #                              contract — only one backend runs at 8080 at
 #                              a time ; switching is a matter of stopping
 #                              one and starting the other ; see body for the
@@ -115,19 +115,19 @@ echo "${D}  These expose the apps' own domain + logs + metrics + actuator${N}"
 #
 # To run BOTH simultaneously (rare — usually for parity testing) :
 #   1. Start Python on a different port :
-#        MIRADOR_SERVER_PORT=8000 uv run iris-service
+#        IRIS_SERVER_PORT=8000 uv run iris-service
 #   2. Override the URL when wiring :
-#        MIRADOR_PYTHON_MCP_URL=http://localhost:8000/mcp bin/dev/mcp-setup-app.sh
+#        IRIS_PYTHON_MCP_URL=http://localhost:8000/mcp bin/dev/mcp-setup-app.sh
 #
 # Otherwise both MCP entries point at 8080 ; the inactive one shows ✗ Failed
 # in `claude mcp list` (expected). Claude routes "use iris-java's tool X"
 # vs "iris-python's X" by NAME, so even with shared URL each entry is
 # distinct from claude's perspective.
-JAVA_MCP_URL="${MIRADOR_JAVA_MCP_URL:-http://localhost:8080/mcp}"
+JAVA_MCP_URL="${IRIS_JAVA_MCP_URL:-http://localhost:8080/mcp}"
 mcp_add_http iris-java "$JAVA_MCP_URL"
 [ "$DRY_RUN" = "0" ] && [ "$REMOVE" = "0" ] && probe_reachable "iris-java" "$JAVA_MCP_URL"
 
-PY_MCP_URL="${MIRADOR_PYTHON_MCP_URL:-http://localhost:8080/mcp}"
+PY_MCP_URL="${IRIS_PYTHON_MCP_URL:-http://localhost:8080/mcp}"
 mcp_add_http iris-python "$PY_MCP_URL"
 [ "$DRY_RUN" = "0" ] && [ "$REMOVE" = "0" ] && probe_reachable "iris-python" "$PY_MCP_URL"
 
