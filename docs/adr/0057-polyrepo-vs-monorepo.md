@@ -6,13 +6,13 @@
 
 ## Contexte
 
-Mirador est composé de deux dépôts indépendants :
-- `mirador-service` (Spring Boot 4 + Java 25, backend + infra Terraform + ADRs)
-- `mirador-ui` (Angular 21 zoneless, frontend SPA + Playwright e2e)
+Iris est composé de deux dépôts indépendants :
+- `iris-service` (Spring Boot 4 + Java 25, backend + infra Terraform + ADRs)
+- `iris-ui` (Angular 21 zoneless, frontend SPA + Playwright e2e)
 
 Les deux sont fortement couplés au runtime via OpenAPI :
-- `mirador-service` génère un `openapi.json` à `/v3/api-docs`
-- `mirador-ui` consomme ce contrat via `scripts/gen-openapi-snapshot.sh`
+- `iris-service` génère un `openapi.json` à `/v3/api-docs`
+- `iris-ui` consomme ce contrat via `scripts/gen-openapi-snapshot.sh`
   → `src/app/core/api/generated.types.ts` (autogénéré)
 
 Au cours du dev quotidien (sessions du 2026-04-23/24), un overhead de
@@ -66,7 +66,7 @@ La question s'est posée : **fusionner les deux en un monorepo
    des configs cross-stack confuses (`package.json` au root qui
    dépend de `apps/svc/pom.xml` ?).
 3. **Contributors potentiels filtrent par repo** — un open-source
-   contributor qui ne fait que du frontend clique sur `mirador-ui`
+   contributor qui ne fait que du frontend clique sur `iris-ui`
    et sait qu'il n'a pas besoin de comprendre Spring Boot. Avec
    monorepo, il doit naviguer pour comprendre que "non, le backend
    tu peux l'ignorer".
@@ -101,14 +101,14 @@ cognitive gagne.
 
 ## Décision
 
-**Conserver le polyrepo.** `mirador-service` et `mirador-ui` restent
+**Conserver le polyrepo.** `iris-service` et `iris-ui` restent
 deux dépôts GitLab indépendants, avec mirrors GitHub indépendants,
 tags indépendants, pipelines CI indépendants.
 
 Justification dominante : **séparation des expertises**. Un dev
-backend qui ouvre `mirador-service` voit du Spring Boot, du Maven,
+backend qui ouvre `iris-service` voit du Spring Boot, du Maven,
 du Java 25 — et pas du Angular qui le déstabilise. Réciproquement
-pour un dev frontend ouvrant `mirador-ui`. Cette séparation devient
+pour un dev frontend ouvrant `iris-ui`. Cette séparation devient
 critique si le projet attire des contributeurs externes
 (open-source, demos publiques pour recruteurs).
 
@@ -125,10 +125,10 @@ défaut architectural.
   "When adding a general rule (workflow, style, architecture):
   also add it to ~/.claude/CLAUDE.md so it applies globally
   across all projects" continue de gérer ce cas.
-- TASKS.md vit dans `mirador-service` (par convention, début
+- TASKS.md vit dans `iris-service` (par convention, début
   de projet). Référence le travail UI quand pertinent. Si un
   jour le projet UI grandit indépendamment, créer un
-  `mirador-ui/TASKS.md` propre.
+  `iris-ui/TASKS.md` propre.
 - 2 pipelines CI indépendants. Coût en runner-minutes accepté.
 - 2 cadences de tag indépendantes (`stable-vX.Y.Z` par repo).
   Quand un changement cross-cutting nécessite une corrélation,
@@ -190,7 +190,7 @@ la portabilité Linux/macOS et les CI runners.
 
 ### D. Sous-modules monorepo virtuel via "common" repo
 
-Rejetée : ajouterait un 3e repo "mirador-common" avec types
+Rejetée : ajouterait un 3e repo "iris-common" avec types
 partagés et règles. Augmente la fragmentation, n'élimine pas
 le drift, ajoute un maillon cassable. Pire des deux mondes.
 

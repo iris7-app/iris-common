@@ -2,7 +2,7 @@
 # =============================================================================
 # bin/ship/changelog.sh — auto-update CHANGELOG.md from Conventional Commits.
 #
-# Universal version usable from any mirador1 repo (java / python / ui /
+# Universal version usable from any iris-7 repo (java / python / ui /
 # shared). Each consumer passes its own tag prefix via `--tag-prefix` so
 # the script reads the right tag space :
 #

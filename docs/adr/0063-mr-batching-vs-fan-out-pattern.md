@@ -85,7 +85,7 @@ right call.
   anyway.
 - The MR description gets long. Mitigation : a short top-level
   paragraph + an ordered bulleted list with one link per commit's
-  scope. The Java [!247](https://gitlab.com/mirador1/mirador-service-java/-/merge_requests/247)
+  scope. The Java [!247](https://gitlab.com/iris-7/iris-service-java/-/merge_requests/247)
   consolidation done on 2026-04-27 is the canonical example to
   copy.
 
@@ -101,10 +101,10 @@ right call.
   CI — batch the changes per MR". This ADR formalises that rule with
   the exception list + recovery procedure.
 - Existing project CLAUDE.md → "Réduire les vagues CI" sections in
-  mirador-service-java + mirador-service-python + mirador-ui — they
+  iris-service-java + iris-service-python + iris-ui — they
   reference the global rule. No change needed there.
 - 2026-04-27 evening session — 8 fan-out MRs consolidated into
-  Java [!247](https://gitlab.com/mirador1/mirador-service-java/-/merge_requests/247)
+  Java [!247](https://gitlab.com/iris-7/iris-service-java/-/merge_requests/247)
   by cherry-picking the 8 source branches onto a single
   `consolidate/2026-04-27-batch` branch. Saved ~1 h 45 of CI.
 

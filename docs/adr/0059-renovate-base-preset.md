@@ -2,12 +2,12 @@
 
 **Status** : Accepted
 **Date** : 2026-04-26
-**Cross-cutting** : applies to all 4 mirador1 repos (java + ui + python + shared).
+**Cross-cutting** : applies to all 4 iris-7 repos (java + ui + python + shared).
 **Sibling files** : `renovate-base.json` + `bin/ship/renovate-sync.sh`.
 
 ## Context
 
-Each of the 4 mirador1 repos started with its own hand-maintained
+Each of the 4 iris-7 repos started with its own hand-maintained
 `renovate.json`. Drift accumulated quickly :
 - Java had `assigneesFromCodeOwners: true` ; Python didn't.
 - UI had a different `prHourlyLimit` than the others.
@@ -20,7 +20,7 @@ Two consolidation patterns considered :
 ### Option A — Renovate hosted preset
 
 Publish `renovate.json` as a Renovate preset (e.g.
-`gitlab>mirador1/mirador-service-shared:renovate.json`) and have each
+`gitlab>iris-7/iris-service-shared:renovate.json`) and have each
 repo's `renovate.json` simply `extends` the preset URL.
 
 Pros :
@@ -64,7 +64,7 @@ visibility for instant propagation, which doesn't matter at our 4-repo scale.
 
 Workflow :
 
-1. **Edit** `mirador-service-shared/renovate-base.json` — common config that
+1. **Edit** `iris-service-shared/renovate-base.json` — common config that
    all 4 repos share.
 2. **Run** `bin/ship/renovate-sync.sh` — regenerates each consuming repo's
    `renovate.json` (preserves repo-specific `groupName` rules + `gitlabci`
@@ -86,7 +86,7 @@ merges if `renovate.json` was hand-edited without re-syncing the base.
   Angular, Shared's K8s tools) live with their repos.
 - No Renovate-hosted-preset dependency — works fully offline.
 - The `bin/ship/renovate-sync.sh --check` mode catches drift in CI.
-- New project added to mirador1 ? Add it to the script's `REPO_PATHS`
+- New project added to iris-7 ? Add it to the script's `REPO_PATHS`
   array, run sync, commit. ~5 minutes.
 
 **Cons** :

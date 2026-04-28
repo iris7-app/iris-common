@@ -2,7 +2,7 @@
 
 - **Status**: Accepted
 - **Date**: 2026-04-23
-- **Deciders**: Mirador maintainers
+- **Deciders**: Iris maintainers
 - **Supersedes**: release-please configuration (removed 2026-04-23 —
   previously scaffolded but never activated, see deleted
   `config/release-please-config.json` + `.release-please-manifest.json`)
@@ -12,7 +12,7 @@
 
 ## Context
 
-Mirador used two parallel release patterns :
+Iris used two parallel release patterns :
 
 1. **`stable-vX.Y.Z` tags** — human-driven stability checkpoints
    created per the global CLAUDE.md rule "tag every green stability
@@ -24,7 +24,7 @@ Mirador used two parallel release patterns :
    even with `--token <GitLab PAT> --repo-url https://gitlab.com/...`,
    release-please still hits `api.github.com/graphql` for its
    "existing releases" query and 401s. Evidence :
-   [svc pipeline #660 release-please job](https://gitlab.com/mirador1/mirador-service/-/pipelines/2472861553).
+   [svc pipeline #660 release-please job](https://gitlab.com/iris-7/iris-service/-/pipelines/2472861553).
 
 The release-please job was `when: never`-gated 2026-04-22 to stop
 red-firing every main merge, pending a tool swap decision.
@@ -37,7 +37,7 @@ Three candidates were evaluated :
 | `standard-version` | 30 min | `node_modules` on a Java repo | 0 (local) | ⚠️ partial |
 | Hand-rolled bash (`infra/common/bin/ship/changelog.sh`) | 1 h | None | 0 | ✅ full |
 
-The second driver is **release cadence**. Mirador is a solo-maintainer
+The second driver is **release cadence**. Iris is a solo-maintainer
 portfolio project with ~3-6 `stable-v*` tags per dev day. At that
 rate, a CI job on tag push would burn 15-30 min × 4-5 tags/day of
 free-runner quota for work the MR pipeline already validated. The
@@ -53,9 +53,9 @@ audit surface that Renovate will eventually ask us to bump.
 ## Decision
 
 Ship **two shell scripts** as the release automation. Both **live in
-[mirador-common](https://gitlab.com/mirador1/mirador-common)** (universal
-submodule, leaf, factored 2026-04-26 per [common ADR-0001](https://gitlab.com/mirador1/mirador-common/-/blob/main/docs/adr/0001-shared-repo-via-submodule.md)
-+ [common ADR-0060 (α flat 2-submodule pattern)](https://gitlab.com/mirador1/mirador-common/-/blob/main/docs/adr/0060-flat-vs-transitive-submodule-inheritance.md)
+[iris-common](https://gitlab.com/iris-7/iris-common)** (universal
+submodule, leaf, factored 2026-04-26 per [common ADR-0001](https://gitlab.com/iris-7/iris-common/-/blob/main/docs/adr/0001-shared-repo-via-submodule.md)
++ [common ADR-0060 (α flat 2-submodule pattern)](https://gitlab.com/iris-7/iris-common/-/blob/main/docs/adr/0060-flat-vs-transitive-submodule-inheritance.md)
 to avoid duplicating identical scripts across the 4 sibling repos) and
 are called from any consumer via `infra/common/bin/ship/...` :
 
@@ -93,10 +93,10 @@ All 4 repos (svc + UI + python + shared itself) call the SAME pair of
 scripts via the submodule — single source of truth, zero per-repo
 copy-paste. Symmetric cleanup deleted release-please from svc + UI
 2026-04-23 ; the per-repo duplicates of changelog.sh + gitlab-release.sh
-were folded into shared 2026-04-26 ([svc MR !169](https://gitlab.com/mirador1/mirador-service/-/merge_requests/169) +
-[UI MR !102](https://gitlab.com/mirador1/mirador-ui/-/merge_requests/102)
+were folded into shared 2026-04-26 ([svc MR !169](https://gitlab.com/iris-7/iris-service/-/merge_requests/169) +
+[UI MR !102](https://gitlab.com/iris-7/iris-ui/-/merge_requests/102)
 for release-please removal ;
-[shared commit ed0c425](https://gitlab.com/mirador1/mirador-service-shared/-/commit/ed0c425)
+[shared commit ed0c425](https://gitlab.com/iris-7/iris-service-shared/-/commit/ed0c425)
 for the factorisation).
 
 ## Consequences
@@ -114,7 +114,7 @@ for the factorisation).
 - **Single tag family**. `stable-vX.Y.Z` is the only release tag ;
   the parallel `vX.Y.Z` scheme release-please would have introduced
   is gone. Reviewers at
-  <https://gitlab.com/mirador1/mirador-service/-/tags> see one line,
+  <https://gitlab.com/iris-7/iris-service/-/tags> see one line,
   not two.
 - **Renovate-free**. No new dependency for Renovate to monitor.
 
@@ -219,12 +219,12 @@ Until one of those triggers, the shell scripts are canon.
 - [`infra/common/bin/ship/changelog.sh`](../../infra/common/bin/ship/changelog.sh) — the generator (factored 2026-04-26)
 - [`infra/common/bin/ship/gitlab-release.sh`](../../infra/common/bin/ship/gitlab-release.sh) — the promoter (factored 2026-04-26)
 - [`infra/common/bin/ship/pre-sync.sh`](../../infra/common/bin/ship/pre-sync.sh) — git-safety pre-flight (also factored)
-- [common ADR-0001](https://gitlab.com/mirador1/mirador-common/-/blob/main/docs/adr/0001-shared-repo-via-submodule.md) — submodule pattern that hosts these scripts
-- [common ADR-0060](https://gitlab.com/mirador1/mirador-common/-/blob/main/docs/adr/0060-flat-vs-transitive-submodule-inheritance.md) — α flat 2-submodule choice rationale
-- [common ADR-0061](https://gitlab.com/mirador1/mirador-common/-/blob/main/docs/adr/0061-per-repo-tag-namespace-pattern.md) — per-repo `stable-X-v*` tag prefix pattern
+- [common ADR-0001](https://gitlab.com/iris-7/iris-common/-/blob/main/docs/adr/0001-shared-repo-via-submodule.md) — submodule pattern that hosts these scripts
+- [common ADR-0060](https://gitlab.com/iris-7/iris-common/-/blob/main/docs/adr/0060-flat-vs-transitive-submodule-inheritance.md) — α flat 2-submodule choice rationale
+- [common ADR-0061](https://gitlab.com/iris-7/iris-common/-/blob/main/docs/adr/0061-per-repo-tag-namespace-pattern.md) — per-repo `stable-X-v*` tag prefix pattern
 - [`docs/how-to/changelog-workflow.md`](../how-to/changelog-workflow.md) — 5-step workflow
-- [svc MR !169](https://gitlab.com/mirador1/mirador-service/-/merge_requests/169) — svc release-please removal
-- [UI MR !102](https://gitlab.com/mirador1/mirador-ui/-/merge_requests/102) — UI release-please removal
+- [svc MR !169](https://gitlab.com/iris-7/iris-service/-/merge_requests/169) — svc release-please removal
+- [UI MR !102](https://gitlab.com/iris-7/iris-ui/-/merge_requests/102) — UI release-please removal
 - [release-please upstream issue about GitLab support](https://github.com/googleapis/release-please/issues/1024)
   — confirms GitHub-only
 - [semantic-release GitLab plugin](https://github.com/semantic-release/gitlab)

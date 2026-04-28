@@ -1,14 +1,14 @@
-# Cross-cutting ADRs — `mirador-common`
+# Cross-cutting ADRs — `iris-common`
 
 This directory captures the **why** of every architectural choice that
-applies UNIVERSALLY across the [mirador1](https://gitlab.com/mirador1)
+applies UNIVERSALLY across the [iris-7](https://gitlab.com/iris-7)
 family — i.e. decisions that bind java + python + ui + shared-service
 all four together (release engineering, repo conventions, dependency
 management).
 
 For **backend-only** decisions (observability stack, K8s posture,
 multi-cloud terraform, secret management), see
-[`mirador-service-shared/docs/adr/`](https://gitlab.com/mirador1/mirador-service-shared/-/tree/main/docs/adr).
+[`iris-service-shared/docs/adr/`](https://gitlab.com/iris-7/iris-service-shared/-/tree/main/docs/adr).
 
 For **repo-local** decisions (Spring Boot stack, FastAPI auth, Angular
 zoneless mode), see each consumer repo's own `docs/adr/`.
@@ -23,7 +23,7 @@ zoneless mode), see each consumer repo's own `docs/adr/`.
 
 ## Numbering
 
-ADR numbers preserved from the source repo (`mirador-service-shared`)
+ADR numbers preserved from the source repo (`iris-service-shared`)
 to maintain external references. New ADRs born here will use the next
 sequential number from this repo's tip (e.g. 0060+).
 
@@ -48,7 +48,7 @@ modifying an ADR.
 ## Adding a new cross-cutting ADR
 
 1. **Verify it's truly universal** — if the decision only affects backend
-   (java + python), it belongs in `mirador-service-shared/docs/adr/`,
+   (java + python), it belongs in `iris-service-shared/docs/adr/`,
    not here. Litmus test : "would the UI repo need this decision too?"
    → yes = universal.
 2. Pick the next 4-digit ID (look at existing files).
@@ -67,7 +67,7 @@ modifying an ADR.
 - [`../../bin/ship/pre-sync.sh`](../../bin/ship/pre-sync.sh) — git safety pre-flight
 - [`../../README.md`](../../README.md) — repo overview + how consumers attach
 - Sibling ADR dirs :
-  [shared-service](https://gitlab.com/mirador1/mirador-service-shared/-/tree/main/docs/adr) ·
-  [java](https://gitlab.com/mirador1/mirador-service-java/-/tree/main/docs/adr) ·
-  [python](https://gitlab.com/mirador1/mirador-service-python/-/tree/main/docs/adr) ·
-  [ui](https://gitlab.com/mirador1/mirador-ui/-/tree/main/docs/adr)
+  [shared-service](https://gitlab.com/iris-7/iris-service-shared/-/tree/main/docs/adr) ·
+  [java](https://gitlab.com/iris-7/iris-service-java/-/tree/main/docs/adr) ·
+  [python](https://gitlab.com/iris-7/iris-service-python/-/tree/main/docs/adr) ·
+  [ui](https://gitlab.com/iris-7/iris-ui/-/tree/main/docs/adr)

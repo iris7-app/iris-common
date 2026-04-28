@@ -2,7 +2,7 @@
 # =============================================================================
 # bin/ship/pre-sync.sh — guard against `reset --hard` data loss.
 #
-# Universal git-safety check usable from any of the 4 mirador1 repos
+# Universal git-safety check usable from any of the 4 iris-7 repos
 # (java / python / ui / shared). When sourced via the submodule (consumer
 # repos run it as `infra/shared/bin/ship/pre-sync.sh`) it operates on the
 # CONSUMER's git state, not on shared's — `git rev-parse` reads from

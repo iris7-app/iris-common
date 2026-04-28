@@ -19,8 +19,8 @@
 # Defaults: notes = annotated tag message (`git tag -l --format='%(contents)'`).
 # Override with --notes "..." for a custom description.
 #
-# Both repos: this script is meant for `mirador-service`; the sibling UI
-# repo (`mirador-ui`) ships an identical copy. Tag both together when a
+# Both repos: this script is meant for `iris-service`; the sibling UI
+# repo (`iris-ui`) ships an identical copy. Tag both together when a
 # stable checkpoint spans both.
 #
 # Related:

@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # =============================================================================
-# bin/dev/mcp-setup-app.sh — wire up Mirador APPLICATION MCP servers
+# bin/dev/mcp-setup-app.sh — wire up Iris APPLICATION MCP servers
 #
-# Per shared ADR-0062 : the application MCP servers (mirador-java,
-# mirador-python) expose what the apps PRODUCE in-process (Customer/Order/
+# Per shared ADR-0062 : the application MCP servers (iris-java,
+# iris-python) expose what the apps PRODUCE in-process (Customer/Order/
 # Product domain, Logback ring buffer logs, Micrometer metrics, Actuator
 # endpoints, OpenAPI summary). Each backend hosts its own MCP transport :
 #
@@ -15,8 +15,8 @@
 # subsequent `claude mcp list` shows ✗ Failed to connect.
 #
 # Start the backends :
-#   cd ~/dev/mirador/mirador-service-java && ./mvnw spring-boot:run
-#   cd ~/dev/mirador/mirador-service-python && uv run mirador-service
+#   cd ~/dev/iris/iris-service-java && ./mvnw spring-boot:run
+#   cd ~/dev/iris/iris-service-python && uv run iris-service
 #
 # Optional env vars (override defaults) :
 #   MIRADOR_JAVA_MCP_URL    — default http://localhost:8080/mcp
@@ -102,9 +102,9 @@ probe_reachable() {
     fi
 }
 
-# ── Mirador application MCP servers ──────────────────────────────────
+# ── Iris application MCP servers ──────────────────────────────────
 
-echo "── Mirador application MCP servers ──"
+echo "── Iris application MCP servers ──"
 echo "${D}  These expose the apps' own domain + logs + metrics + actuator${N}"
 
 # BOTH backends share the SAME default contract — port 8080, /mcp endpoint.
@@ -115,21 +115,21 @@ echo "${D}  These expose the apps' own domain + logs + metrics + actuator${N}"
 #
 # To run BOTH simultaneously (rare — usually for parity testing) :
 #   1. Start Python on a different port :
-#        MIRADOR_SERVER_PORT=8000 uv run mirador-service
+#        MIRADOR_SERVER_PORT=8000 uv run iris-service
 #   2. Override the URL when wiring :
 #        MIRADOR_PYTHON_MCP_URL=http://localhost:8000/mcp bin/dev/mcp-setup-app.sh
 #
 # Otherwise both MCP entries point at 8080 ; the inactive one shows ✗ Failed
-# in `claude mcp list` (expected). Claude routes "use mirador-java's tool X"
-# vs "mirador-python's X" by NAME, so even with shared URL each entry is
+# in `claude mcp list` (expected). Claude routes "use iris-java's tool X"
+# vs "iris-python's X" by NAME, so even with shared URL each entry is
 # distinct from claude's perspective.
 JAVA_MCP_URL="${MIRADOR_JAVA_MCP_URL:-http://localhost:8080/mcp}"
-mcp_add_http mirador-java "$JAVA_MCP_URL"
-[ "$DRY_RUN" = "0" ] && [ "$REMOVE" = "0" ] && probe_reachable "mirador-java" "$JAVA_MCP_URL"
+mcp_add_http iris-java "$JAVA_MCP_URL"
+[ "$DRY_RUN" = "0" ] && [ "$REMOVE" = "0" ] && probe_reachable "iris-java" "$JAVA_MCP_URL"
 
 PY_MCP_URL="${MIRADOR_PYTHON_MCP_URL:-http://localhost:8080/mcp}"
-mcp_add_http mirador-python "$PY_MCP_URL"
-[ "$DRY_RUN" = "0" ] && [ "$REMOVE" = "0" ] && probe_reachable "mirador-python" "$PY_MCP_URL"
+mcp_add_http iris-python "$PY_MCP_URL"
+[ "$DRY_RUN" = "0" ] && [ "$REMOVE" = "0" ] && probe_reachable "iris-python" "$PY_MCP_URL"
 
 # ── Summary ──────────────────────────────────────────────────────────
 
