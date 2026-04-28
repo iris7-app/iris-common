@@ -1,11 +1,15 @@
-# mirador-common
+# iris-common
 
 [![BSD-3-Clause](https://img.shields.io/badge/license-BSD--3--Clause-blue)](LICENSE)
 ![Leaf submodule](https://img.shields.io/badge/Leaf-zero_deps-green)
 
-Universal **cross-repo conventions** for the [mirador1](https://gitlab.com/mirador1)
+Universal **cross-repo conventions** for the [iris7](https://gitlab.com/iris7)
 project family — release engineering scripts, ADR tooling, Conventional
 Commits CI template, Renovate base preset.
+
+Part of **Iris**, an observability-first showcase across 7 facets.
+See [iris-service-java](https://gitlab.com/iris7/iris-service-java)
+for the master narrative + visual.
 
 ## Why this repo
 
