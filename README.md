@@ -1,4 +1,4 @@
-# iris-common
+![iris-common](docs/assets/banner.svg)
 
 [![BSD-3-Clause](https://img.shields.io/badge/license-BSD--3--Clause-blue)](LICENSE)
 ![Leaf submodule](https://img.shields.io/badge/Leaf-zero_deps-green)
