@@ -43,6 +43,9 @@ modifying an ADR.
 | 0059 | Accepted | [Renovate base preset + sync script (option B)](0059-renovate-base-preset.md) |
 | 0060 | Accepted | [Flat 2-submodule inheritance over transitive nested](0060-flat-vs-transitive-submodule-inheritance.md) |
 | 0061 | Accepted | [Per-repo tag namespace pattern (`stable-X-v*`)](0061-per-repo-tag-namespace-pattern.md) |
+| 0062 | Accepted | [0062. Thematic mastery axes — tag annotations + README top blocks](0062-thematic-mastery-tags-readme.md) |
+| 0063 | Accepted | [0063. MR batching vs fan-out — when to merge, when to split](0063-mr-batching-vs-fan-out-pattern.md) |
+| 0065 | Accepted | [0065. Route every CI job to the macbook-local runner](0065-route-ci-to-macbook-local-runner.md) |
 <!-- ADR-INDEX:END -->
 
 ## Adding a new cross-cutting ADR

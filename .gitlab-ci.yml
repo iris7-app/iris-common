@@ -9,6 +9,15 @@
 # 2026-04-29 RPO run hit was exactly this class of bug).
 # =============================================================================
 
+# Per ~/.claude/CLAUDE.md "Use local runners, never rely on GitLab
+# SaaS quota". Routes every job (including the included templates,
+# unless they override their own tags:) to the macbook-local runner.
+# The 2026-04-29 conv-commits job on this repo's first MR hit
+# ci_quota_exceeded on SaaS shared runners — same fix as java + ui.
+default:
+  tags:
+    - macbook-local
+
 include:
   - local: ci-templates/conventional-commits.yml
   - local: ci-templates/shellcheck.yml
