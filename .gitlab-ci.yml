@@ -1,0 +1,22 @@
+# =============================================================================
+# iris-common CI — self-validation for the universal templates + scripts.
+# Eats its own dogfood : the same templates that consumers include from
+# this repo also gate THIS repo's MRs.
+#
+# 11 hand-written shell scripts under bin/ (dev/ + ship/) are the main
+# artefact ; shellcheck on them prevents a typo from shipping silently
+# to every consumer (the @@KEEP_IRIS_PROD@@ sentinel pattern that the
+# 2026-04-29 RPO run hit was exactly this class of bug).
+# =============================================================================
+
+include:
+  - local: ci-templates/conventional-commits.yml
+  - local: ci-templates/shellcheck.yml
+
+stages:
+  - validate
+
+# ── Self-test the conventional-commits + shellcheck templates by
+#    including them as `local:` (since cross-project include from the
+#    same project doesn't make sense). They re-declare the validate
+#    stage and are gated by their own rules: blocks. ─────────────────────
