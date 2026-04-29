@@ -1,0 +1,39 @@
+# Shellcheck CI template — included by every iris repo with bash scripts.
+# Catches bash bugs at MR time so a typo in `bin/cluster/demo/up.sh` (the
+# 2026-04-29 RPO run hit one such) doesn't ship to main.
+#
+# Usage in consumer .gitlab-ci.yml :
+#   include:
+#     - project: 'iris-7/iris-common'
+#       ref: main
+#       file: 'ci-templates/shellcheck.yml'
+#
+# Override the default scan path by setting SHELLCHECK_PATH before the
+# include (e.g. only `bin/dev` if you want to scope down) — the default
+# `bin/**/*.sh` covers everything under bin/ recursively.
+#
+# This is a hard gate (no allow_failure) — if shellcheck fails, the
+# pipeline fails. Per CLAUDE.md "Surgical fixes not allow_failure".
+
+variables:
+  SHELLCHECK_PATH: "bin"
+
+shellcheck:
+  stage: validate
+  image: koalaman/shellcheck-alpine:v0.10.0
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "**/*.sh"
+        - .gitlab-ci.yml
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      changes:
+        - "**/*.sh"
+        - .gitlab-ci.yml
+  script:
+    - |
+      if [ ! -d "$SHELLCHECK_PATH" ]; then
+        echo "ℹ️  $SHELLCHECK_PATH does not exist ; skipping (no shell scripts to check)"
+        exit 0
+      fi
+      find "$SHELLCHECK_PATH" -name '*.sh' -type f | xargs -t shellcheck --severity=warning
