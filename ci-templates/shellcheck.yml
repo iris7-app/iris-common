@@ -17,6 +17,12 @@
 
 variables:
   SHELLCHECK_PATH: "bin"
+  # Severity floor that gates the pipeline. Default `error` because
+  # warnings are advisory (unused variables, eval-array, …) and pre-
+  # existing-warning backlogs in the consumer repos shouldn't block
+  # MRs unrelated to those scripts. Override to `warning` once your
+  # repo's warning backlog is at zero to enforce a stricter floor.
+  SHELLCHECK_SEVERITY: "error"
 
 shellcheck:
   stage: validate
@@ -36,4 +42,11 @@ shellcheck:
         echo "ℹ️  $SHELLCHECK_PATH does not exist ; skipping (no shell scripts to check)"
         exit 0
       fi
-      find "$SHELLCHECK_PATH" -name '*.sh' -type f | xargs -t shellcheck --severity=warning
+      # Show ALL findings (info+) for visibility, but only fail on
+      # severity >= $SHELLCHECK_SEVERITY. The full list still appears
+      # in the job log so reviewers can decide whether to fix.
+      echo "▶ Visibility pass (severity=info, non-gating) :"
+      find "$SHELLCHECK_PATH" -name '*.sh' -type f | xargs shellcheck --severity=info || true
+      echo ""
+      echo "▶ Gating pass (severity=$SHELLCHECK_SEVERITY) :"
+      find "$SHELLCHECK_PATH" -name '*.sh' -type f | xargs shellcheck --severity="$SHELLCHECK_SEVERITY"
