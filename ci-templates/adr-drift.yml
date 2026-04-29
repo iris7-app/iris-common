@@ -1,0 +1,49 @@
+# ADR drift CI template — fails when docs/adr/ has new ADRs that the
+# README index hasn't been re-regenerated against. Catches a forgotten
+# `regen-adr-index.sh` run before merge.
+#
+# Usage in consumer .gitlab-ci.yml :
+#   include:
+#     - project: 'iris-7/iris-common'
+#       ref: main
+#       file: 'ci-templates/adr-drift.yml'
+#
+# Pre-conditions :
+#   - Repo has docs/adr/*.md
+#   - Submodule infra/common/ is initialised AT CHECKOUT TIME
+#     (consumer's .gitlab-ci.yml needs `submodules: recursive` or
+#     `submodules: true` in `variables: GIT_SUBMODULE_STRATEGY`)
+#
+# This is a hard gate — if the index is out of date, the pipeline fails.
+
+adr-drift:
+  stage: validate
+  image: alpine:3.20
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - docs/adr/**/*
+        - .gitlab-ci.yml
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      changes:
+        - docs/adr/**/*
+        - .gitlab-ci.yml
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+  before_script:
+    - apk add --no-cache bash git grep coreutils
+  script:
+    - |
+      if [ ! -d "docs/adr" ]; then
+        echo "ℹ️  no docs/adr/ directory ; skipping"
+        exit 0
+      fi
+      if [ -x "infra/common/bin/dev/regen-adr-index.sh" ]; then
+        infra/common/bin/dev/regen-adr-index.sh --check
+      elif [ -x "bin/dev/regen-adr-index.sh" ]; then
+        bin/dev/regen-adr-index.sh --check
+      else
+        echo "❌ no regen-adr-index.sh found at infra/common/bin/dev/ or bin/dev/"
+        echo "   bump the infra/common submodule pin and re-run"
+        exit 1
+      fi
