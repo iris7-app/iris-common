@@ -40,6 +40,8 @@ ui, AND shared-service itself).
 | `bin/ship/bump-common-everywhere.sh` | Bump `infra/common` SHA across all 4 consumers in one pass (commit + push + MR + auto-merge) | maintainer (run from `iris-common`) |
 | `bin/dev/regen-adr-index.sh` | Regenerate `docs/adr/README.md` flat-index table from ADR files (`--check` for CI drift) | every repo (per-repo ADRs) |
 | `ci-templates/conventional-commits.yml` | GitLab CI template enforcing Conventional Commits on every MR | every repo (`include:` from `.gitlab-ci.yml`) |
+| `ci-templates/shellcheck.yml` | GitLab CI template running `koalaman/shellcheck-alpine` on `bin/**/*.sh` ; gates on `error` by default (override with `SHELLCHECK_SEVERITY=warning` once a repo's warning backlog is clean) | every repo with shell scripts |
+| `ci-templates/adr-drift.yml` | GitLab CI template invoking `infra/common/bin/dev/regen-adr-index.sh --check` to fail when `docs/adr/` has new ADRs the index hasn't been re-regenerated against | every repo with `docs/adr/` |
 | `renovate-base.json` | Common Renovate config, synced into each repo's `renovate.json` via `bin/ship/renovate-sync.sh` | every repo |
 | `docs/adr/0001-shared-repo-via-submodule.md` | ADR explaining the submodule pattern (this repo is a concrete instance) | reference |
 | `docs/adr/0055-shell-based-release-automation.md` | ADR justifying hand-rolled bash over `release-please` | reference |
