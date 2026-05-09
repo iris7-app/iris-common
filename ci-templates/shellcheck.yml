@@ -40,10 +40,12 @@ shellcheck:
       changes:
         - "**/*.sh"
         - .gitlab-ci.yml
+        - "ci-templates/**/*.yml"   # Self-trigger when the template itself changes (iris-common eats its own dogfood)
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       changes:
         - "**/*.sh"
         - .gitlab-ci.yml
+        - "ci-templates/**/*.yml"   # Same — main pushes that touch templates also trigger
   script:
     - |
       if [ ! -d "$SHELLCHECK_PATH" ]; then
@@ -53,8 +55,17 @@ shellcheck:
       # Show ALL findings (info+) for visibility, but only fail on
       # severity >= $SHELLCHECK_SEVERITY. The full list still appears
       # in the job log so reviewers can decide whether to fix.
+      # --format=gcc avoids a v0.10.0 bug where the default tty format
+      # crashes on stdout writes when scripts contain multi-byte UTF-8
+      # chars (em-dash —, smart quotes, etc.) — error surfaces as
+      # `<stdout>: commitBuffer: invalid argument (cannot encode
+      # character '\8212')`. The gcc format is plain ASCII (file:line:
+      # col: severity: msg [SCxxxx]) so the encoding bug never fires.
+      # Discovered 2026-05-09 — LC_ALL=C.UTF-8 alone wasn't enough
+      # because shellcheck v0.10.0 has a hard-coded encoding bug, not a
+      # locale issue.
       echo "▶ Visibility pass (severity=info, non-gating) :"
-      find "$SHELLCHECK_PATH" -name '*.sh' -type f | xargs shellcheck --severity=info || true
+      find "$SHELLCHECK_PATH" -name '*.sh' -type f | xargs shellcheck --format=gcc --severity=info || true
       echo ""
       echo "▶ Gating pass (severity=$SHELLCHECK_SEVERITY) :"
-      find "$SHELLCHECK_PATH" -name '*.sh' -type f | xargs shellcheck --severity="$SHELLCHECK_SEVERITY"
+      find "$SHELLCHECK_PATH" -name '*.sh' -type f | xargs shellcheck --format=gcc --severity="$SHELLCHECK_SEVERITY"
