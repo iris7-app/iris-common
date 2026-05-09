@@ -23,6 +23,14 @@ variables:
   # MRs unrelated to those scripts. Override to `warning` once your
   # repo's warning backlog is at zero to enforce a stricter floor.
   SHELLCHECK_SEVERITY: "error"
+  # shellcheck-alpine v0.10.0 crashes on stdout writes when scripts contain
+  # multi-byte UTF-8 chars (em-dash —, smart quotes, etc.) without a UTF-8
+  # locale set — error surfaces as `<stdout>: commitBuffer: invalid argument
+  # (invalid character)`. Forcing LC_ALL/LANG to C.UTF-8 lets the Haskell
+  # runtime encode UTF-8 in its output stream. Discovered 2026-05-09 on
+  # iris-service-java !275 (em-dashes in bin/run/_preamble.sh comments).
+  LC_ALL: "C.UTF-8"
+  LANG: "C.UTF-8"
 
 shellcheck:
   stage: validate
