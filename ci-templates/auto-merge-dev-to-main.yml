@@ -1,0 +1,53 @@
+# Auto-merge dev → main CI template — included by every consumer that
+# wants its dev branch promoted to main automatically once the dev
+# pipeline goes green.
+#
+# Usage in consumer .gitlab-ci.yml:
+#   include:
+#     - project: 'iris-7/iris-common'
+#       ref: main
+#       file: 'ci-templates/auto-merge-dev-to-main.yml'
+#
+# Stage: declares its own `promote` stage. Consumers must list `promote`
+# in their `stages:` list (after the last gating stage).
+#
+# Auth: requires the GROUP-level CI variable AUTOMERGE_TOKEN (Group
+# Access Token, scope=write_repository, role=Maintainer). Created once
+# at the iris-7 group level so every consumer inherits it. The token's
+# user must be added to the "Allowed to push" list of `main` branch
+# protection (Settings > Repository > Branches > main) on each consumer
+# repo, otherwise the push fails with `pre-receive hook declined`.
+#
+# Why push direct to main (not MR auto): the dev pipeline already
+# validated the same SHA via the gating stages ; running another full
+# pipeline on main is redundant + workflow:rules often produce empty
+# pipelines for dev → main MRs that block branch protection. Push
+# direct is faster, latency near-zero after dev green.
+#
+# Failure semantics: if the push fails (token expired, permissions
+# wrong, conflict from race), the job fails — the dev branch stays
+# ahead of main and a human can intervene. This is intentional :
+# silent skip on push failure would let dev drift unchecked.
+
+promote-dev-to-main:
+  stage: promote
+  image: alpine:3.20
+  tags:
+    - macbook-local
+  rules:
+    - if: $CI_COMMIT_BRANCH == "dev"
+      when: on_success
+  before_script:
+    - apk add --no-cache git
+  script:
+    - |
+      if [ -z "$AUTOMERGE_TOKEN" ]; then
+        echo "ERROR: AUTOMERGE_TOKEN not set — declare it as a group/project CI variable (scope=write_repository)."
+        exit 1
+      fi
+      git config user.email "ci-automerge@iris-7.local"
+      git config user.name "GitLab CI Auto-Merge"
+      # Use oauth2 + AUTOMERGE_TOKEN to bypass branch protection on main.
+      # The token user must be in "Allowed to push" list per main branch protection.
+      git push "https://oauth2:${AUTOMERGE_TOKEN}@gitlab.com/${CI_PROJECT_PATH}.git" "HEAD:refs/heads/main"
+      echo "✅ Pushed dev (${CI_COMMIT_SHORT_SHA}) → main on ${CI_PROJECT_PATH}"
