@@ -21,9 +21,11 @@ default:
 include:
   - local: ci-templates/conventional-commits.yml
   - local: ci-templates/shellcheck.yml
+  - local: ci-templates/auto-merge-dev-to-main.yml
 
 stages:
   - validate
+  - promote
 
 # ── Self-test the conventional-commits + shellcheck templates by
 #    including them as `local:` (since cross-project include from the
