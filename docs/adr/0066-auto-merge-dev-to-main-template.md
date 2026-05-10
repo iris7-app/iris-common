@@ -1,6 +1,6 @@
 # ADR-0066 — auto-merge dev → main via CI template + group token
 
-* Status : **Accepted** (shipped 2026-05-10)
+**Status** : Accepted (shipped 2026-05-10)
 * Decision date : 2026-05-10
 * Deciders : @Beennnn
 * Tags : `ci`, `polyrepo`, `release-engineering`
