@@ -47,7 +47,14 @@ promote-dev-to-main:
       fi
       git config user.email "ci-automerge@iris-7.local"
       git config user.name "GitLab CI Auto-Merge"
-      # Use oauth2 + AUTOMERGE_TOKEN to bypass branch protection on main.
-      # The token user must be in "Allowed to push" list per main branch protection.
-      git push "https://oauth2:${AUTOMERGE_TOKEN}@gitlab.com/${CI_PROJECT_PATH}.git" "HEAD:refs/heads/main"
+      REPO_URL="https://oauth2:${AUTOMERGE_TOKEN}@gitlab.com/${CI_PROJECT_PATH}.git"
+      git fetch "$REPO_URL" main:refs/remotes/origin/main
+      # Skip if dev is already ancestor of main (= already merged via MR).
+      # Avoids non-fast-forward push when a manual dev → main MR was used.
+      if git merge-base --is-ancestor HEAD origin/main; then
+        echo "ℹ️  dev (${CI_COMMIT_SHORT_SHA}) is already ancestor of main — nothing to promote."
+        exit 0
+      fi
+      # Force-with-lease so we don't overwrite unrelated work on main.
+      git push --force-with-lease=main:origin/main "$REPO_URL" "HEAD:refs/heads/main"
       echo "✅ Pushed dev (${CI_COMMIT_SHORT_SHA}) → main on ${CI_PROJECT_PATH}"
