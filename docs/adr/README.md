@@ -46,6 +46,9 @@ modifying an ADR.
 | 0062 | Accepted | [0062. Thematic mastery axes — tag annotations + README top blocks](0062-thematic-mastery-tags-readme.md) |
 | 0063 | Accepted | [0063. MR batching vs fan-out — when to merge, when to split](0063-mr-batching-vs-fan-out-pattern.md) |
 | 0065 | Accepted | [0065. Route every CI job to the macbook-local runner](0065-route-ci-to-macbook-local-runner.md) |
+| 0066 | Accepted | [auto-merge dev → main via CI template + group token](0066-auto-merge-dev-to-main-template.md) |
+| 0067 | Accepted | [Kafka CI image switch (bitnamilegacy → redpanda)](0067-kafka-redpanda-switch-for-ci.md) |
+| 0068 | Accepted | [Route Python integration-tests to GitLab SaaS runner](0068-route-services-ci-to-saas.md) |
 <!-- ADR-INDEX:END -->
 
 ## Adding a new cross-cutting ADR
