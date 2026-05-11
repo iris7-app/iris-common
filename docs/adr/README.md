@@ -49,6 +49,8 @@ modifying an ADR.
 | 0066 | Accepted | [auto-merge dev → main via CI template + group token](0066-auto-merge-dev-to-main-template.md) |
 | 0067 | Accepted | [Kafka CI image switch (bitnamilegacy → redpanda)](0067-kafka-redpanda-switch-for-ci.md) |
 | 0068 | Accepted | [Route Python integration-tests to GitLab SaaS runner](0068-route-services-ci-to-saas.md) |
+| 0069 | Accepted | [Double-CI : GitLab as reference + GitHub Actions as backup](0069-double-ci-gitlab-github-actions.md) |
+| 0070 | Accepted | [workflow:rules dev/main allowlist pattern](0070-workflow-rules-dev-branch-pattern.md) |
 <!-- ADR-INDEX:END -->
 
 ## Adding a new cross-cutting ADR
