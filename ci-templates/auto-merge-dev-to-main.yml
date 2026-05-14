@@ -48,7 +48,12 @@ promote-dev-to-main:
       git config user.email "ci-automerge@iris-7.local"
       git config user.name "GitLab CI Auto-Merge"
       REPO_URL="https://oauth2:${AUTOMERGE_TOKEN}@gitlab.com/${CI_PROJECT_PATH}.git"
-      git fetch "$REPO_URL" main:refs/remotes/origin/main
+      # Force-update local origin/main (the `+` prefix). Without `+`, the
+      # fetch fails non-fast-forward when the runner workspace cached a
+      # main HEAD that diverged from remote — typically after a manual
+      # `git push --force` on main during bootstrap. Observed 2026-05-14
+      # on iris-common after audit-doc merge (job 14366821409).
+      git fetch "$REPO_URL" +main:refs/remotes/origin/main
       # Skip if dev is already ancestor of main (= already merged via MR).
       # Avoids non-fast-forward push when a manual dev → main MR was used.
       if git merge-base --is-ancestor HEAD origin/main; then
