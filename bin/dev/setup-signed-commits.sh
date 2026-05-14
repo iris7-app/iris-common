@@ -46,6 +46,10 @@ run() {
   if [[ $DRY_RUN -eq 1 ]]; then
     echo -e "  ${YLW}DRY-RUN${NC} would run: $*"
   else
+    # shellcheck disable=SC2294
+    # Intentional `eval "$@"` so callers can pass shell pipelines + redirects
+    # as a single string argument (e.g. `run 'git config --global X Y && echo OK'`).
+    # The alternative `"$@"` would treat the entire pipeline as a literal command.
     eval "$@"
   fi
 }

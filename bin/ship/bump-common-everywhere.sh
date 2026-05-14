@@ -100,7 +100,7 @@ echo
 
 # ── Pre-flight 1 : common is in-sync with its remote ─────────────────────────
 echo "── Pre-flight 1 : common sync state ──"
-cd "${COMMON_DIR}"
+cd "${COMMON_DIR}" || { echo "❌ cannot cd to ${COMMON_DIR}" >&2; exit 2; }
 git fetch origin main --quiet 2>/dev/null || true
 COMMON_LOCAL=$(git rev-parse HEAD)
 COMMON_REMOTE=$(git rev-parse origin/main 2>/dev/null || echo "unknown")
@@ -142,7 +142,7 @@ for consumer in "${CONSUMER_LIST[@]}"; do
         CONSUMERS_SKIP+=("${consumer}")
         continue
     fi
-    cd "${cdir}"
+    cd "${cdir}" || { warn "${consumer} : cannot cd to ${cdir}"; continue; }
 
     # Has the consumer got infra/common at all ?
     if [ ! -d "infra/common/.git" ] && [ ! -f "infra/common/.git" ]; then
@@ -207,7 +207,7 @@ for consumer in "${CONSUMERS_OK[@]}"; do
     echo
     printf "${BOLD}▸ ${consumer}${N}\n"
     cdir="${WORKSPACE}/${consumer}"
-    cd "${cdir}"
+    cd "${cdir}" || { fail "${consumer} : cannot cd to ${cdir}"; FAILED+=("${consumer}"); continue; }
 
     # Step 1 : sync local main + dev with origin
     DEFAULT_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@' || echo "main")
@@ -229,10 +229,10 @@ for consumer in "${CONSUMERS_OK[@]}"; do
     git pull --rebase origin "${TARGET_BRANCH}" --quiet 2>/dev/null || true
 
     # Step 2 : bump submodule
-    cd infra/common
+    cd infra/common || { fail "${consumer} : cannot cd to infra/common"; FAILED+=("${consumer}"); continue; }
     git fetch origin main --quiet
     git checkout "${COMMON_LOCAL}" --quiet
-    cd "${cdir}"
+    cd "${cdir}" || { fail "${consumer} : cannot cd back to ${cdir}"; FAILED+=("${consumer}"); continue; }
     git add infra/common
 
     # Step 3 : commit

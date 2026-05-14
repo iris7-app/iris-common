@@ -18,6 +18,13 @@ default:
   tags:
     - macbook-local
 
+# Bump shellcheck severity from `error` (template default) to `warning`
+# now that the local warning backlog is at zero (cleanup landed 2026-05-14).
+# Catches new warnings before they accumulate. Consumer repos opt-in
+# individually when their own warning backlog reaches zero.
+variables:
+  SHELLCHECK_SEVERITY: "warning"
+
 include:
   - local: ci-templates/conventional-commits.yml
   - local: ci-templates/shellcheck.yml
