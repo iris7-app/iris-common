@@ -51,6 +51,7 @@ modifying an ADR.
 | 0068 | Accepted | [Route Python integration-tests to GitLab SaaS runner](0068-route-services-ci-to-saas.md) |
 | 0069 | Accepted | [Double-CI : GitLab as reference + GitHub Actions as backup](0069-double-ci-gitlab-github-actions.md) |
 | 0070 | Accepted | [workflow:rules dev/main allowlist pattern](0070-workflow-rules-dev-branch-pattern.md) |
+| 0071 | Accepted | [Pipeline variable override role : `owner` across all 5 repos](0071-pipeline-variable-override-role.md) |
 <!-- ADR-INDEX:END -->
 
 ## Adding a new cross-cutting ADR
